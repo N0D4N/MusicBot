@@ -98,7 +98,8 @@ public class JMusicBot
                 .addCommands(aboutCommand,
                         new PingCommand(),
                         new SettingsCmd(bot),
-                        
+                        new OldRandomCmd(),
+                        new RandomCmd(),
                         new LyricsCmd(bot),
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
