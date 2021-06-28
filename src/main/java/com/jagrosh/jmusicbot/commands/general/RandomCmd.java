@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentMap;
 public class RandomCmd extends Command {
     private final ConcurrentMap<Integer, TimestampToRandomNumbers> guildToRandom;
     private final Long SixHours = 21_600_000L;
-    private final Long TwelveHours = 43_200_000L;
 
     public RandomCmd() {
         this.name = "random";
@@ -83,7 +82,7 @@ public class RandomCmd extends Command {
         event.getChannel().sendMessage(String.valueOf(returnRand)).reference(event.getMessage()).mentionRepliedUser(false).queue();
         if(now % 3 == 0) {
             for (Map.Entry<Integer, TimestampToRandomNumbers> entry : this.guildToRandom.entrySet()) {
-                if(now - entry.getValue().Timestamp >= TwelveHours){
+                if(now - entry.getValue().Timestamp > SixHours){
                     this.guildToRandom.remove(entry.getKey());
                     entry.getValue().RandomNumbers.clear();
                 }
