@@ -62,7 +62,7 @@ public class RandomCmd extends Command {
         }
         int returnRand = 0;
         long now = Instant.now().toEpochMilli();
-        if (!guildToRandom.containsKey(max) || (strings.length == 2 && strings[0].equalsIgnoreCase("new"))) {
+        if (!guildToRandom.containsKey(max) || (strings.length == 2 && (strings[0].equalsIgnoreCase("new") || strings[0].equalsIgnoreCase("n")))) {
             // We haven't randomed for such number, or should clear it per user request
             ConcurrentHashMap.KeySetView<Integer, Boolean> randomNumbers = ConcurrentHashMap.newKeySet();
             returnRand = getRandomNumber(null, max, getSeed(event));
