@@ -32,7 +32,7 @@ public class RandomCmd extends Command {
     @Override
     protected void execute(CommandEvent event) {
         if (event.getArgs().isEmpty()) {
-            event.getChannel().sendMessage(new MessageBuilder().append("You must provide 1 number, or 1 number prepended with \"new\" or \"n\"").build()).queue();
+            event.getChannel().sendMessage(new MessageBuilder().append("You must provide 1 number, or 1 number prepended with \"new\" \"n\"").build()).queue();
         }
         int max = Integer.MIN_VALUE;
 
@@ -44,19 +44,6 @@ public class RandomCmd extends Command {
             return;
         }
         catch (Exception ex){
-            event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** unknown error").build()).queue();
-            return;
-        }
-        int returnRand = 0;
-        long now = Instant.now().toEpochMilli();
-        if (!guildToRandom.containsKey(max) || (strings.length == 2 && (strings[0].equalsIgnoreCase("new") || strings[0].equalsIgnoreCase("n")))) {
-            // We haven't randomed for such number, or should clear it per user request
-            ConcurrentHashMap.KeySetView<Integer, Boolean> randomNumbers = ConcurrentHashMap.newKeySet();
-            returnRand = getRandomNumber(null, max, getSeed(event));
-            randomNumbers.add(returnRand);
-            guildToRandom.put(max, new TimestampToRandomNumbers(now, randomNumbers));
-        } else { // We already randomed for such number
-            final TimestampToRandomNumbers timestampToRandomNumbers = guildToRandom.get(max);
             event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** unknown error").build()).queue();
             return;
         }
