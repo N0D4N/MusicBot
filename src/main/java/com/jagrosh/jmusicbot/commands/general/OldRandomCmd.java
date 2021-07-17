@@ -8,7 +8,7 @@ public class OldRandomCmd extends Command {
     public OldRandomCmd() {
         this.name = "old random";
         this.help = "get random number";
-        this.aliases = new String[] {"or", "orandom"};
+        this.aliases = new String[] {"or", "orandom", "rr"};
         this.guildOnly = true;
     }
 
