@@ -16,7 +16,6 @@
 package com.jagrosh.jmusicbot.commands.music;
 
 import java.util.List;
-import java.util.Collections;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.commands.MusicCommand;
@@ -56,8 +55,7 @@ public class PlaylistsCmd extends MusicCommand
         else
         {
             StringBuilder builder = new StringBuilder(event.getClient().getSuccess()+" Available playlists:\n");
-            Collections.sort(list);
-            list.forEach(str -> builder.append("`").append(str).append("`,"));
+            list.forEach(str -> builder.append("`").append(str).append("`, "));
             builder.append("\nType `").append(event.getClient().getTextualPrefix()).append("play playlist <name>` to play a playlist");
             event.reply(builder.toString());
         }
