@@ -32,6 +32,6 @@ public class OldRandomCmd extends Command {
             event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** number must be greater than 1").build()).queue();
             return;
         }
-        event.getChannel().sendMessage(String.valueOf(RandomCmd.getRandomNumber(null, max, RandomCmd.getSeed(event)))).reference(event.getMessage()).mentionRepliedUser(false).queue();
+        event.getChannel().sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(null, max, RandomCmd.getSeed(event)))).reference(event.getMessage()).mentionRepliedUser(false).queue();
     }
 }
