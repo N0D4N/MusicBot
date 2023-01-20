@@ -98,7 +98,7 @@ public class RandomCmd extends Command {
     }
     
     public static String formatNumber(Integer randomedValue, Integer maxValue){
-        return String.format("%0" + String.valueOf(Math.log10(maxValue) +1) + "d", randomedValue);
+        return String.format("%0" + String.valueOf((int)Math.log10(maxValue) +1) + "d", randomedValue);
     }
 
     private class TimestampToRandomNumbers {
