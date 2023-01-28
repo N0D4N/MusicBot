@@ -79,7 +79,7 @@ public class RandomCmd extends Command {
                 timestampToRandomNumbers.Timestamp = now;
             }
         }
-        event.getChannel().sendMessage(String.valueOf(returnRand)).reference(event.getMessage()).mentionRepliedUser(false).queue();
+        event.getChannel().sendMessage(formatNumber(returnRand, max)).reference(event.getMessage()).mentionRepliedUser(false).queue();
         if(now % 3 == 0) {
             for (Map.Entry<Integer, TimestampToRandomNumbers> entry : this.guildToRandom.entrySet()) {
                 if(now - entry.getValue().Timestamp > SixHours){
@@ -95,6 +95,10 @@ public class RandomCmd extends Command {
             random = new SecureRandom(seed == null ? new byte[4] : seed);
         }
         return random.nextInt(max) + 1;
+    }
+    
+    public static String formatNumber(Integer randomedValue, Integer maxValue){
+        return String.format("%0" + String.valueOf((int)Math.log10(maxValue) +1) + "d", randomedValue);
     }
 
     private class TimestampToRandomNumbers {
