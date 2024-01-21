@@ -8,7 +8,7 @@ public class OldRandomCmd extends Command {
     public OldRandomCmd() {
         this.name = "old random";
         this.help = "get random number";
-        this.aliases = new String[] {"or", "orandom", "rr"};
+        this.aliases = new String[]{"or", "orandom", "rr"};
         this.guildOnly = true;
     }
 
@@ -23,8 +23,7 @@ public class OldRandomCmd extends Command {
         } catch (NumberFormatException ex) {
             event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** wrong number format").build()).queue();
             return;
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** unknown error").build()).queue();
             return;
         }
@@ -32,6 +31,6 @@ public class OldRandomCmd extends Command {
             event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** number must be greater than 1").build()).queue();
             return;
         }
-        event.getChannel().sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max),max)).reference(event.getMessage()).mentionRepliedUser(false).queue();
+        event.getChannel().sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max)).reference(event.getMessage()).mentionRepliedUser(false).queue();
     }
 }

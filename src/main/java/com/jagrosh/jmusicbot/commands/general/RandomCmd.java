@@ -7,12 +7,13 @@ import net.dv8tion.jda.api.MessageBuilder;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.*;
+import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class RandomCmd extends Command {
-    private final ConcurrentMap<Integer, TimestampToRandomNumbers> guildToRandom;
+    private final ConcurrentMap<Integer, TimestampToRandomNumbers> guildToRandom = new ConcurrentHashMap<>();
     private static final Long SixHours = 21_600_000L;
 
     private static final SecureRandom secureRandom;
@@ -30,7 +31,6 @@ public class RandomCmd extends Command {
         this.aliases = new String[]{"r"};
         this.help = "get random number non-repeated number";
         this.guildOnly = true;
-        this.guildToRandom = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -46,8 +46,7 @@ public class RandomCmd extends Command {
         } catch (NumberFormatException ex) {
             event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** wrong number format").build()).queue();
             return;
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** unknown error").build()).queue();
             return;
         }
@@ -61,20 +60,19 @@ public class RandomCmd extends Command {
             guildToRandom.put(max, new TimestampToRandomNumbers(now, randomNumbers));
         } else { // We already randomed for such number
             final TimestampToRandomNumbers timestampToRandomNumbers = guildToRandom.get(max);
-            if(now - timestampToRandomNumbers.Timestamp <= SixHours && timestampToRandomNumbers.RandomNumbers.size() < max){
+            if (now - timestampToRandomNumbers.Timestamp <= SixHours && timestampToRandomNumbers.RandomNumbers.size() < max) {
                 // It's not time to refresh and clear random numbers and we still have possible random values
                 final Set<Integer> randomNumbers = timestampToRandomNumbers.RandomNumbers;
-                while(true) {
+                while (true) {
                     final int rand = getRandomNumber(max);
                     if (!randomNumbers.contains(rand)) {
-                        if(randomNumbers.add(rand)){
+                        if (randomNumbers.add(rand)) {
                             returnRand = rand;
                             break;
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 // First random was more than 6 hours ago, or we already exceeded max number of random numbers
                 timestampToRandomNumbers.RandomNumbers.clear();
                 returnRand = getRandomNumber(max);
@@ -83,9 +81,9 @@ public class RandomCmd extends Command {
             }
         }
         event.getChannel().sendMessage(formatNumber(returnRand, max)).reference(event.getMessage()).mentionRepliedUser(false).queue();
-        if(now % 3 == 0) {
+        if (now % 3 == 0) {
             for (Map.Entry<Integer, TimestampToRandomNumbers> entry : this.guildToRandom.entrySet()) {
-                if(now - entry.getValue().Timestamp > SixHours){
+                if (now - entry.getValue().Timestamp > SixHours) {
                     this.guildToRandom.remove(entry.getKey());
                     entry.getValue().RandomNumbers.clear();
                 }
@@ -93,12 +91,12 @@ public class RandomCmd extends Command {
         }
     }
 
-    public static Integer getRandomNumber(Integer max){
+    public static Integer getRandomNumber(Integer max) {
         return secureRandom.nextInt(max) + 1;
     }
-    
-    public static String formatNumber(Integer randomedValue, Integer maxValue){
-        return String.format("%0" + String.valueOf((int)Math.log10(maxValue) +1) + "d", randomedValue);
+
+    public static String formatNumber(Integer randomedValue, Integer maxValue) {
+        return String.format("%0" + ((int) Math.log10(maxValue) + 1) + "d", randomedValue);
     }
 
     private final class TimestampToRandomNumbers {
