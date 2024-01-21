@@ -101,7 +101,7 @@ public class RandomCmd extends Command {
 
     private final class TimestampToRandomNumbers {
         public Long Timestamp;
-        public Set<Integer> RandomNumbers;
+        public final Set<Integer> RandomNumbers;
 
         public TimestampToRandomNumbers(Long timestamp, Set<Integer> randomNumbers) {
             Timestamp = timestamp;
