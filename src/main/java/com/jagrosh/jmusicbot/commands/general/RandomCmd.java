@@ -4,8 +4,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.MessageBuilder;
 
-import javax.annotation.Nullable;
-import java.nio.ByteBuffer;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
@@ -14,7 +13,17 @@ import java.util.concurrent.ConcurrentMap;
 
 public class RandomCmd extends Command {
     private final ConcurrentMap<Integer, TimestampToRandomNumbers> guildToRandom;
-    private final Long SixHours = 21_600_000L;
+    private static final Long SixHours = 21_600_000L;
+
+    private static final SecureRandom secureRandom;
+
+    static {
+        try {
+            secureRandom = SecureRandom.getInstanceStrong();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public RandomCmd() {
         this.name = "random";
@@ -22,11 +31,6 @@ public class RandomCmd extends Command {
         this.help = "get random number non-repeated number";
         this.guildOnly = true;
         this.guildToRandom = new ConcurrentHashMap<>();
-    }
-
-    public static byte[] getSeed(CommandEvent event){
-        int hash = Objects.hash(event.getMessage().getIdLong(), System.currentTimeMillis());
-        return ByteBuffer.allocate(4).putInt(hash).array();
     }
 
     @Override
@@ -52,17 +56,16 @@ public class RandomCmd extends Command {
         if (!guildToRandom.containsKey(max) || (strings.length == 2 && (strings[0].equalsIgnoreCase("new") || strings[0].equalsIgnoreCase("n")))) {
             // We haven't randomed for such number, or should clear it per user request
             ConcurrentHashMap.KeySetView<Integer, Boolean> randomNumbers = ConcurrentHashMap.newKeySet();
-            returnRand = getRandomNumber(null, max, getSeed(event));
+            returnRand = getRandomNumber(max);
             randomNumbers.add(returnRand);
             guildToRandom.put(max, new TimestampToRandomNumbers(now, randomNumbers));
         } else { // We already randomed for such number
             final TimestampToRandomNumbers timestampToRandomNumbers = guildToRandom.get(max);
             if(now - timestampToRandomNumbers.Timestamp <= SixHours && timestampToRandomNumbers.RandomNumbers.size() < max){
                 // It's not time to refresh and clear random numbers and we still have possible random values
-                final SecureRandom secureRandom = new SecureRandom();
                 final Set<Integer> randomNumbers = timestampToRandomNumbers.RandomNumbers;
                 while(true) {
-                    final int rand = getRandomNumber(secureRandom, max, getSeed(event));
+                    final int rand = getRandomNumber(max);
                     if (!randomNumbers.contains(rand)) {
                         if(randomNumbers.add(rand)){
                             returnRand = rand;
@@ -74,7 +77,7 @@ public class RandomCmd extends Command {
             else {
                 // First random was more than 6 hours ago, or we already exceeded max number of random numbers
                 timestampToRandomNumbers.RandomNumbers.clear();
-                returnRand = getRandomNumber(null, max, getSeed(event));
+                returnRand = getRandomNumber(max);
                 timestampToRandomNumbers.RandomNumbers.add(returnRand);
                 timestampToRandomNumbers.Timestamp = now;
             }
@@ -90,18 +93,15 @@ public class RandomCmd extends Command {
         }
     }
 
-    public static Integer getRandomNumber(@Nullable SecureRandom random, Integer max, byte[] seed){
-        if(random == null) {
-            random = new SecureRandom(seed == null ? new byte[4] : seed);
-        }
-        return random.nextInt(max) + 1;
+    public static Integer getRandomNumber(Integer max){
+        return secureRandom.nextInt(max) + 1;
     }
     
     public static String formatNumber(Integer randomedValue, Integer maxValue){
         return String.format("%0" + String.valueOf((int)Math.log10(maxValue) +1) + "d", randomedValue);
     }
 
-    private class TimestampToRandomNumbers {
+    private final class TimestampToRandomNumbers {
         public Long Timestamp;
         public Set<Integer> RandomNumbers;
 
