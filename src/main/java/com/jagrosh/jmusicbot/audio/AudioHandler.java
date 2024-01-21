@@ -16,7 +16,6 @@
 package com.jagrosh.jmusicbot.audio;
 
 import com.jagrosh.jmusicbot.Bot;
-import com.jagrosh.jmusicbot.JMusicBot;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.settings.RepeatMode;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -27,16 +26,16 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 import net.dv8tion.jda.api.entities.Activity;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jagrosh.jmusicbot.queue.FairQueue;
@@ -63,7 +62,6 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     public final static String PLAY_EMOJI  = "\u25B6"; // ▶
     public final static String PAUSE_EMOJI = "\u23F8"; // ⏸
     public final static String STOP_EMOJI  = "\u23F9"; // ⏹
-    
     private final FairQueue<QueuedTrack> queue = new FairQueue<>();
     private final List<AudioTrack> defaultQueue = new LinkedList<>();
     private final Set<String> votes = new HashSet<>();
@@ -217,7 +215,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             try {
                 this.timer = new Timer(true);
                 timer.schedule(new AnisonUpdateTask(this.manager.getBot()), 0, 10000);
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException | URISyntaxException e) {
                 e.printStackTrace();
             }
         }
@@ -366,39 +364,50 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         return jda.getGuildById(guildId);
     }
 
-    private class AnisonUpdateTask extends TimerTask{
+    private final class AnisonUpdateTask extends TimerTask{
         private final Bot bot;
-        private final URL url;
-        private final Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
-        public AnisonUpdateTask(Bot bot) throws MalformedURLException {
+        private static final URL url;
+
+        static {
+            try {
+                url = new URI("https://anison.fm/status.php?widget=true").toURL();
+            } catch (MalformedURLException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private static final Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
+        private static final Pattern InLive = Pattern.compile("В эфире: ");
+        private static final Pattern Dash = Pattern.compile("&#151;");
+
+        AnisonUpdateTask(final Bot bot) throws MalformedURLException, URISyntaxException {
             this.bot = bot;
-            this.url = new URL("https://anison.fm/status.php?widget=true");
         }
 
         @Override
         public void run() {
             try {
-                JSONObject json = this.readJsonFromUrl(this.url);
-                String on_air = REMOVE_TAGS.matcher(json.getString("on_air")).replaceAll("");
-                String s = on_air.replaceAll("В эфире: ", "").replaceAll("&#151;", "—");
-                bot.getJDA().getPresence().setActivity(Activity.listening(s));
-            } catch (IOException e) {
+                final var json = readJsonFromUrl();
+                final var onAir = REMOVE_TAGS.matcher(json.getString("on_air")).replaceAll("");
+                final var s = Dash.matcher(InLive.matcher(onAir).replaceAll("")).replaceAll("—");
+                this.bot.getJDA().getPresence().setActivity(Activity.listening(s));
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
 
-        private String readAll(Reader rd) throws IOException {
-            StringBuilder sb = new StringBuilder();
+        private static String readAll(final Reader rd) throws IOException {
+            final var sb = new StringBuilder(512);
             int cp;
             while ((cp = rd.read()) != -1) {
                 sb.append((char) cp);
             }
             return sb.toString();
         }
-        public JSONObject readJsonFromUrl(URL url) throws IOException, JSONException {
-            try (InputStream is = url.openStream()) {
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                String jsonText = readAll(rd);
+        static JSONObject readJsonFromUrl() throws IOException {
+            try (final var is = url.openStream()) {
+                final var rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                final var jsonText = readAll(rd);
                 return new JSONObject(jsonText);
             }
         }

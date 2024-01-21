@@ -8,12 +8,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Set;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class RandomCmd extends Command {
-    private final ConcurrentMap<Integer, TimestampToRandomNumbers> guildToRandom = new ConcurrentHashMap<>();
+public final class RandomCmd extends Command {
+    private final ConcurrentMap<Integer, TimestampToRandomNumbers> guildToRandom = new ConcurrentHashMap<>(2);
     private static final Long SixHours = 21_600_000L;
 
     private static final SecureRandom secureRandom;
@@ -21,7 +20,7 @@ public class RandomCmd extends Command {
     static {
         try {
             secureRandom = SecureRandom.getInstanceStrong();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
@@ -34,35 +33,35 @@ public class RandomCmd extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        if (event.getArgs().isEmpty()) {
-            event.getChannel().sendMessage(new MessageBuilder().append("You must provide 1 number, or 1 number prepended with \"new\" \"n\"").build()).queue();
+    protected void execute(final CommandEvent commandEvent) {
+        if (commandEvent.getArgs().isEmpty()) {
+            commandEvent.getChannel().sendMessage(new MessageBuilder().append("You must provide 1 number, or 1 number prepended with \"new\" \"n\"").build()).queue();
         }
         int max = Integer.MIN_VALUE;
 
-        String[] strings = event.getArgs().split(" ");
+        final var strings = commandEvent.getArgs().split(" ");
         try {
             max = Integer.parseUnsignedInt(strings.length == 2 ? strings[1] : strings[0]);
-        } catch (NumberFormatException ex) {
-            event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** wrong number format").build()).queue();
+        } catch (final NumberFormatException ex) {
+            commandEvent.getChannel().sendMessage(new MessageBuilder("**" + commandEvent.getMember().getEffectiveName() + "** wrong number format").build()).queue();
             return;
-        } catch (Exception ex) {
-            event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** unknown error").build()).queue();
+        } catch (final Exception ex) {
+            commandEvent.getChannel().sendMessage(new MessageBuilder("**" + commandEvent.getMember().getEffectiveName() + "** unknown error").build()).queue();
             return;
         }
         int returnRand = 0;
-        long now = Instant.now().toEpochMilli();
-        if (!guildToRandom.containsKey(max) || (strings.length == 2 && (strings[0].equalsIgnoreCase("new") || strings[0].equalsIgnoreCase("n")))) {
+        final long now = Instant.now().toEpochMilli();
+        if (!this.guildToRandom.containsKey(max) || (strings.length == 2 && (strings[0].equalsIgnoreCase("new") || strings[0].equalsIgnoreCase("n")))) {
             // We haven't randomed for such number, or should clear it per user request
-            ConcurrentHashMap.KeySetView<Integer, Boolean> randomNumbers = ConcurrentHashMap.newKeySet();
+            final ConcurrentHashMap.KeySetView<Integer, Boolean> randomNumbers = ConcurrentHashMap.newKeySet();
             returnRand = getRandomNumber(max);
             randomNumbers.add(returnRand);
-            guildToRandom.put(max, new TimestampToRandomNumbers(now, randomNumbers));
+            this.guildToRandom.put(max, new TimestampToRandomNumbers(now, randomNumbers));
         } else { // We already randomed for such number
-            final TimestampToRandomNumbers timestampToRandomNumbers = guildToRandom.get(max);
+            final var timestampToRandomNumbers = this.guildToRandom.get(max);
             if (now - timestampToRandomNumbers.Timestamp <= SixHours && timestampToRandomNumbers.RandomNumbers.size() < max) {
                 // It's not time to refresh and clear random numbers and we still have possible random values
-                final Set<Integer> randomNumbers = timestampToRandomNumbers.RandomNumbers;
+                final var randomNumbers = timestampToRandomNumbers.RandomNumbers;
                 while (true) {
                     final int rand = getRandomNumber(max);
                     if (!randomNumbers.contains(rand)) {
@@ -80,9 +79,9 @@ public class RandomCmd extends Command {
                 timestampToRandomNumbers.Timestamp = now;
             }
         }
-        event.getChannel().sendMessage(formatNumber(returnRand, max)).reference(event.getMessage()).mentionRepliedUser(false).queue();
-        if (now % 3 == 0) {
-            for (Map.Entry<Integer, TimestampToRandomNumbers> entry : this.guildToRandom.entrySet()) {
+        commandEvent.getChannel().sendMessage(formatNumber(returnRand, max)).reference(commandEvent.getMessage()).mentionRepliedUser(false).queue();
+        if (now % 3L == 0L) {
+            for (final var entry : this.guildToRandom.entrySet()) {
                 if (now - entry.getValue().Timestamp > SixHours) {
                     this.guildToRandom.remove(entry.getKey());
                     entry.getValue().RandomNumbers.clear();
@@ -91,21 +90,21 @@ public class RandomCmd extends Command {
         }
     }
 
-    public static Integer getRandomNumber(Integer max) {
+    static Integer getRandomNumber(final Integer max) {
         return secureRandom.nextInt(max) + 1;
     }
 
-    public static String formatNumber(Integer randomedValue, Integer maxValue) {
-        return String.format("%0" + ((int) Math.log10(maxValue) + 1) + "d", randomedValue);
+    static String formatNumber(final Integer randomedValue, final Integer maxValue) {
+        return String.format("%0" + (StrictMath.log10(maxValue) + 1.0D) + "d", randomedValue);
     }
 
     private final class TimestampToRandomNumbers {
-        public Long Timestamp;
-        public final Set<Integer> RandomNumbers;
+        Long Timestamp;
+        final Set<Integer> RandomNumbers;
 
-        public TimestampToRandomNumbers(Long timestamp, Set<Integer> randomNumbers) {
-            Timestamp = timestamp;
-            RandomNumbers = randomNumbers;
+        TimestampToRandomNumbers(final Long timestamp, final Set<Integer> randomNumbers) {
+            this.Timestamp = timestamp;
+            this.RandomNumbers = randomNumbers;
         }
     }
 }

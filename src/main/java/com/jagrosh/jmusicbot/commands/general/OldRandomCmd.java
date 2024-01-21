@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import net.dv8tion.jda.api.MessageBuilder;
 
-public class OldRandomCmd extends Command {
+public final class OldRandomCmd extends Command {
     public OldRandomCmd() {
         this.name = "old random";
         this.help = "get random number";
@@ -13,24 +13,24 @@ public class OldRandomCmd extends Command {
     }
 
     @Override
-    protected void execute(CommandEvent event) {
-        if (event.getArgs().isEmpty()) {
-            event.getChannel().sendMessage(new MessageBuilder().append("You must provide at least 1 argument").build()).queue();
+    protected void execute(final CommandEvent commandEvent) {
+        if (commandEvent.getArgs().isEmpty()) {
+            commandEvent.getChannel().sendMessage(new MessageBuilder().append("You must provide at least 1 argument").build()).queue();
         }
-        int max = 0;
+        var max = 0;
         try {
-            max = Integer.parseUnsignedInt(event.getArgs());
-        } catch (NumberFormatException ex) {
-            event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** wrong number format").build()).queue();
+            max = Integer.parseUnsignedInt(commandEvent.getArgs());
+        } catch (final NumberFormatException ex) {
+            commandEvent.getChannel().sendMessage(new MessageBuilder("**" + commandEvent.getMember().getEffectiveName() + "** wrong number format").build()).queue();
             return;
-        } catch (Exception ex) {
-            event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** unknown error").build()).queue();
+        } catch (final Exception ex) {
+            commandEvent.getChannel().sendMessage(new MessageBuilder("**" + commandEvent.getMember().getEffectiveName() + "** unknown error").build()).queue();
             return;
         }
         if (max <= 1) {
-            event.getChannel().sendMessage(new MessageBuilder("**" + event.getMember().getEffectiveName() + "** number must be greater than 1").build()).queue();
+            commandEvent.getChannel().sendMessage(new MessageBuilder("**" + commandEvent.getMember().getEffectiveName() + "** number must be greater than 1").build()).queue();
             return;
         }
-        event.getChannel().sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max)).reference(event.getMessage()).mentionRepliedUser(false).queue();
+        commandEvent.getChannel().sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max)).reference(commandEvent.getMessage()).mentionRepliedUser(false).queue();
     }
 }
