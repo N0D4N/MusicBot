@@ -15,7 +15,7 @@
  */
 package com.jagrosh.jmusicbot.audio;
 
-import com.jagrosh.jmusicbot.Bot;
+import com.nodan.jmusicbot.audio.AnisonUpdateTask;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.settings.RepeatMode;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -24,26 +24,15 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.Reader;
-
-import net.dv8tion.jda.api.entities.Activity;
-import org.json.JSONObject;
 
 import com.jagrosh.jmusicbot.queue.FairQueue;
 import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import java.nio.ByteBuffer;
-import java.util.regex.Pattern;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -212,12 +201,8 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     {
         votes.clear();
         if(track.getInfo().uri.contains("anison") && this.timer == null){
-            try {
-                this.timer = new Timer(true);
-                timer.schedule(new AnisonUpdateTask(this.manager.getBot()), 0, 10000);
-            } catch (MalformedURLException | URISyntaxException e) {
-                e.printStackTrace();
-            }
+            this.timer = new Timer(true);
+            this.timer.schedule(new AnisonUpdateTask(this.manager.getBot()), 0, 10000);
         }
         else{
             manager.getBot().getNowplayingHandler(). onTrackUpdate(guildId, track, this);
@@ -362,54 +347,5 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     private Guild guild(JDA jda)
     {
         return jda.getGuildById(guildId);
-    }
-
-    private final class AnisonUpdateTask extends TimerTask{
-        private final Bot bot;
-        private static final URL url;
-
-        static {
-            try {
-                url = new URI("https://anison.fm/status.php?widget=true").toURL();
-            } catch (MalformedURLException | URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private static final Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
-        private static final Pattern InLive = Pattern.compile("В эфире: ");
-        private static final Pattern Dash = Pattern.compile("&#151;");
-
-        AnisonUpdateTask(final Bot bot) throws MalformedURLException, URISyntaxException {
-            this.bot = bot;
-        }
-
-        @Override
-        public void run() {
-            try {
-                final var json = readJsonFromUrl();
-                final var onAir = REMOVE_TAGS.matcher(json.getString("on_air")).replaceAll("");
-                final var s = Dash.matcher(InLive.matcher(onAir).replaceAll("")).replaceAll("—");
-                this.bot.getJDA().getPresence().setActivity(Activity.listening(s));
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private static String readAll(final Reader rd) throws IOException {
-            final var sb = new StringBuilder(512);
-            int cp;
-            while ((cp = rd.read()) != -1) {
-                sb.append((char) cp);
-            }
-            return sb.toString();
-        }
-        static JSONObject readJsonFromUrl() throws IOException {
-            try (final var is = url.openStream()) {
-                final var rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                final var jsonText = readAll(rd);
-                return new JSONObject(jsonText);
-            }
-        }
     }
 }
