@@ -15,6 +15,7 @@
  */
 package com.jagrosh.jmusicbot.audio;
 
+import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.queue.AbstractQueue;
 import com.jagrosh.jmusicbot.settings.QueueType;
@@ -28,10 +29,28 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
+
+import net.dv8tion.jda.api.entities.Activity;
+import org.json.JSONObject;
+
+import com.jagrosh.jmusicbot.queue.FairQueue;
 import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import java.nio.ByteBuffer;
+import java.util.regex.Pattern;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -50,13 +69,15 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     public final static String PAUSE_EMOJI = "\u23F8"; // ⏸
     public final static String STOP_EMOJI  = "\u23F9"; // ⏹
 
+    private final FairQueue<QueuedTrack> queue = new FairQueue<>();
     private final List<AudioTrack> defaultQueue = new LinkedList<>();
     private final Set<String> votes = new HashSet<>();
     
     private final PlayerManager manager;
     private final AudioPlayer audioPlayer;
     private final long guildId;
-    
+    private Timer timer;
+
     private AudioFrame lastFrame;
     private AbstractQueue<QueuedTrack> queue;
 
@@ -183,6 +204,10 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             if(!playFromDefault())
             {
                 manager.getBot().getNowplayingHandler().onTrackUpdate(null);
+                if(timer != null){
+                    this.timer.cancel();
+                    this.timer = null;
+                }
                 if(!manager.getBot().getConfig().getStay())
                     manager.getBot().closeAudioConnection(guildId);
                 // unpause, in the case when the player was paused and the track has been skipped.
@@ -201,7 +226,17 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     public void onTrackStart(AudioPlayer player, AudioTrack track) 
     {
         votes.clear();
-        manager.getBot().getNowplayingHandler().onTrackUpdate(track);
+        if(track.getInfo().uri.contains("anison") && this.timer == null){
+            try {
+                this.timer = new Timer(true);
+                timer.schedule(new AnisonUpdateTask(this.manager.getBot()), 0, 10000);
+            } catch (MalformedURLException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            manager.getBot().getNowplayingHandler(). onTrackUpdate(track);
+        }
     }
 
     
@@ -228,7 +263,15 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
 
             try 
             {
-                eb.setTitle(track.getInfo().title, track.getInfo().uri);
+                String title;
+                if(track.getInfo().uri.contains("anison.fm")){
+                    title = jda.getPresence().getActivity().getName();
+                }
+                else
+                {
+                    title = track.getInfo().title;
+                }
+                eb.setTitle(title, track.getInfo().uri);
             }
             catch(Exception e) 
             {
@@ -317,5 +360,54 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     private Guild guild(JDA jda)
     {
         return jda.getGuildById(guildId);
+    }
+
+    private final class AnisonUpdateTask extends TimerTask{
+        private final Bot bot;
+        private static final URL url;
+
+        static {
+            try {
+                url = new URI("https://anison.fm/status.php?widget=true").toURL();
+            } catch (MalformedURLException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        private static final Pattern REMOVE_TAGS = Pattern.compile("<.+?>");
+        private static final Pattern InLive = Pattern.compile("В эфире: ");
+        private static final Pattern Dash = Pattern.compile("&#151;");
+
+        AnisonUpdateTask(final Bot bot) throws MalformedURLException, URISyntaxException {
+            this.bot = bot;
+        }
+
+        @Override
+        public void run() {
+            try {
+                final var json = readJsonFromUrl();
+                final var onAir = REMOVE_TAGS.matcher(json.getString("on_air")).replaceAll("");
+                final var s = Dash.matcher(InLive.matcher(onAir).replaceAll("")).replaceAll("—");
+                this.bot.getJDA().getPresence().setActivity(Activity.listening(s));
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private static String readAll(final Reader rd) throws IOException {
+            final var sb = new StringBuilder(512);
+            int cp;
+            while ((cp = rd.read()) != -1) {
+                sb.append((char) cp);
+            }
+            return sb.toString();
+        }
+        static JSONObject readJsonFromUrl() throws IOException {
+            try (final var is = url.openStream()) {
+                final var rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                final var jsonText = readAll(rd);
+                return new JSONObject(jsonText);
+            }
+        }
     }
 }
