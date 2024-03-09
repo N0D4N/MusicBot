@@ -32,7 +32,8 @@ import java.awt.Color;
 import java.util.Arrays;
 import javax.security.auth.login.LoginException;
 
-import com.nodan.jmusicbot.commands.general.*;
+import com.nodan.jmusicbot.commands.general.OldRandomCmd;
+import com.nodan.jmusicbot.commands.general.RandomCmd;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -209,7 +210,7 @@ public class JMusicBot
                         new SkiptoCmd(bot),
                         new StopCmd(bot),
                         new VolumeCmd(bot),
-                        
+
                         new PrefixCmd(bot),
                         new QueueTypeCmd(bot),
                         new SetdjCmd(bot),
@@ -226,7 +227,7 @@ public class JMusicBot
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot)
                 );
-        
+
         // enable eval if applicable
         if(config.useEval())
             cb.addCommand(new EvalCmd(bot));

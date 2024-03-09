@@ -17,7 +17,7 @@ class OldRandomCmd : Command() {
             commandEvent.channel.sendMessage(MessageBuilder("You must provide at least 1 argument").build()).queue()
             return
         }
-        var max = 0
+        val max: Int
         try {
             max = Integer.parseUnsignedInt(commandEvent.args)
         } catch (ex: NumberFormatException) {

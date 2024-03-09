@@ -22,7 +22,7 @@ class RandomCmd : Command() {
         if (commandEvent.args.isEmpty()) {
             commandEvent.channel.sendMessage(MessageBuilder().append("You must provide 1 number, or 1 number prepended with \"new\" \"n\"").build()).queue()
         }
-        var max = Int.MIN_VALUE
+        val max: Int
 
         val strings = commandEvent.args.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         try {
@@ -34,7 +34,7 @@ class RandomCmd : Command() {
             commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** unknown error").build()).queue()
             return
         }
-        var returnRand = 0
+        val returnRand: Int
         val now = Instant.now().toEpochMilli()
         if (!guildToRandom.containsKey(max) || (strings.size == 2 && (strings[0].equals("new", ignoreCase = true) || strings[0].equals("n", ignoreCase = true)))) {
             // We haven't randomed for such number, or should clear it per user request
