@@ -24,8 +24,6 @@ import com.jagrosh.jmusicbot.commands.dj.*;
 import com.jagrosh.jmusicbot.commands.general.*;
 import com.jagrosh.jmusicbot.commands.music.*;
 import com.jagrosh.jmusicbot.commands.owner.*;
-import com.jagrosh.jmusicbot.entities.Prompt;
-import com.jagrosh.jmusicbot.gui.GUI;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.awt.Color;
@@ -72,15 +70,8 @@ public class JMusicBot
     
     private static void startBot()
     {
-        // create prompt to handle startup
-        Prompt prompt = new Prompt("JMusicBot");
-        
-        // startup checks
-        OtherUtil.checkVersion(prompt);
-        OtherUtil.checkJavaVersion(prompt);
-        
         // load config
-        BotConfig config = new BotConfig(prompt);
+        BotConfig config = new BotConfig();
         config.load();
         if(!config.isValid())
             return;
@@ -91,25 +82,6 @@ public class JMusicBot
         SettingsManager settings = new SettingsManager();
         Bot bot = new Bot(waiter, config, settings);
         CommandClient client = createCommandClient(config, settings, bot);
-        
-        
-        if(!prompt.isNoGUI())
-        {
-            try 
-            {
-                GUI gui = new GUI(bot);
-                bot.setGUI(gui);
-                gui.init();
-
-                LOG.info("Loaded config from " + config.getConfigLocation());
-            }
-            catch(Exception e)
-            {
-                LOG.error("Could not start GUI. If you are "
-                        + "running on a server or in a location where you cannot display a "
-                        + "window, please run in nogui mode using the -Dnogui=true flag.");
-            }
-        }
         
         // attempt to log in and start
         try
@@ -129,7 +101,7 @@ public class JMusicBot
             String unsupportedReason = OtherUtil.getUnsupportedBotReason(jda);
             if (unsupportedReason != null)
             {
-                prompt.alert(Prompt.Level.ERROR, "JMusicBot", "JMusicBot cannot be run on this Discord bot: " + unsupportedReason);
+                LOG.error("JMusicBot cannot be run on this Discord bot: " + unsupportedReason);
                 try{ Thread.sleep(5000);}catch(InterruptedException ignored){} // this is awful but until we have a better way...
                 jda.shutdown();
                 System.exit(1);
@@ -140,27 +112,27 @@ public class JMusicBot
             // message content intent
             if(!"@mention".equals(config.getPrefix()))
             {
-                prompt.alert(Prompt.Level.INFO, "JMusicBot", "You currently have a custom prefix set. "
+                LOG.info("You currently have a custom prefix set. "
                         + "If your prefix is not working, make sure that the 'MESSAGE CONTENT INTENT' is Enabled "
                         + "on https://discord.com/developers/applications/" + jda.getSelfUser().getId() + "/bot");
             }
         }
         catch (LoginException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", ex + "\nPlease make sure you are "
+            LOG.error(ex + "\nPlease make sure you are "
                     + "editing the correct config.txt file, and that you have used the "
                     + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }
         catch(IllegalArgumentException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", "Some aspect of the configuration is "
+            LOG.error("Some aspect of the configuration is "
                     + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }
         catch(ErrorResponseException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", ex + "\nInvalid reponse returned when "
+            LOG.error(ex + "\nInvalid reponse returned when "
                     + "attempting to connect, please make sure you're connected to the internet");
             System.exit(1);
         }

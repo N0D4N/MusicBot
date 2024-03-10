@@ -15,7 +15,6 @@
  */
 package com.jagrosh.jmusicbot;
 
-import com.jagrosh.jmusicbot.entities.Prompt;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -25,6 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -33,10 +34,10 @@ import net.dv8tion.jda.api.entities.Activity;
  */
 public class BotConfig
 {
-    private final Prompt prompt;
     private final static String CONTEXT = "Config";
     private final static String START_TOKEN = "/// START OF JMUSICBOT CONFIG ///";
     private final static String END_TOKEN = "/// END OF JMUSICBOT CONFIG ///";
+    public final static Logger LOG = LoggerFactory.getLogger("Config");
     
     private Path path = null;
     private String token, prefix, altprefix, helpWord, playlistsFolder,
@@ -50,9 +51,8 @@ public class BotConfig
 
     private boolean valid = false;
     
-    public BotConfig(Prompt prompt)
+    public BotConfig()
     {
-        this.prompt = prompt;
     }
     
     public void load()
@@ -101,45 +101,15 @@ public class BotConfig
             // validate bot token
             if(token==null || token.isEmpty() || token.equalsIgnoreCase("BOT_TOKEN_HERE"))
             {
-                token = prompt.prompt("Please provide a bot token."
-                        + "\nInstructions for obtaining a token can be found here:"
-                        + "\nhttps://github.com/jagrosh/MusicBot/wiki/Getting-a-Bot-Token."
-                        + "\nBot Token: ");
-                if(token==null)
-                {
-                    prompt.alert(Prompt.Level.WARNING, CONTEXT, "No token provided! Exiting.\n\nConfig Location: " + path.toAbsolutePath().toString());
-                    return;
-                }
-                else
-                {
-                    write = true;
-                }
+                LOG.warn("No token provided! Exiting.\n\nConfig Location: " + path.toAbsolutePath().toString());
+                return;
             }
             
             // validate bot owner
             if(owner<=0)
             {
-                try
-                {
-                    owner = Long.parseLong(prompt.prompt("Owner ID was missing, or the provided owner ID is not valid."
-                        + "\nPlease provide the User ID of the bot's owner."
-                        + "\nInstructions for obtaining your User ID can be found here:"
-                        + "\nhttps://github.com/jagrosh/MusicBot/wiki/Finding-Your-User-ID"
-                        + "\nOwner User ID: "));
-                }
-                catch(NumberFormatException | NullPointerException ex)
-                {
-                    owner = 0;
-                }
-                if(owner<=0)
-                {
-                    prompt.alert(Prompt.Level.ERROR, CONTEXT, "Invalid User ID! Exiting.\n\nConfig Location: " + path.toAbsolutePath().toString());
-                    return;
-                }
-                else
-                {
-                    write = true;
-                }
+                LOG.error("Invalid User ID! Exiting.\n\nConfig Location: " + path.toAbsolutePath().toString());
+                return;
             }
             
             if(write)
@@ -150,7 +120,7 @@ public class BotConfig
         }
         catch (ConfigException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, CONTEXT, ex + ": " + ex.getMessage() + "\n\nConfig Location: " + path.toAbsolutePath().toString());
+            LOG.error(ex + ": " + ex.getMessage() + "\n\nConfig Location: " + path.toAbsolutePath().toString());
         }
     }
     
@@ -165,7 +135,7 @@ public class BotConfig
         }
         catch(IOException ex) 
         {
-            prompt.alert(Prompt.Level.WARNING, CONTEXT, "Failed to write new config options to config.txt: "+ex
+            LOG.warn("Failed to write new config options to config.txt: "+ex
                 + "\nPlease make sure that the files are not on your desktop or some other restricted area.\n\nConfig Location: " 
                 + path.toAbsolutePath().toString());
         }
@@ -193,18 +163,17 @@ public class BotConfig
     
     public static void writeDefaultConfig()
     {
-        Prompt prompt = new Prompt(null, null, true, true);
-        prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Generating default config file");
+        LOG.info("Generating default config file");
         Path path = BotConfig.getConfigPath();
         byte[] bytes = BotConfig.loadDefaultConfig().getBytes();
         try
         {
-            prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Writing default config file to " + path.toAbsolutePath().toString());
+            LOG.info("Writing default config file to " + path.toAbsolutePath().toString());
             Files.write(path, bytes);
         }
         catch(Exception ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot Config", "An error occurred writing the default config file: " + ex.getMessage());
+            LOG.error("An error occurred writing the default config file: " + ex.getMessage());
         }
     }
     
