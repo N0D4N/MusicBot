@@ -21,16 +21,20 @@ class OldRandomCmd : Command() {
         try {
             max = Integer.parseUnsignedInt(commandEvent.args)
         } catch (ex: NumberFormatException) {
-            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** wrong number format").build()).queue()
+            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** wrong number format").build())
+                .queue()
             return
         } catch (ex: Exception) {
-            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** unknown error").build()).queue()
+            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** unknown error").build())
+                .queue()
             return
         }
         if (max <= 1) {
-            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** number must be greater than 1").build()).queue()
+            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** number must be greater than 1").build())
+                .queue()
             return
         }
-        commandEvent.channel.sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max)).reference(commandEvent.message).mentionRepliedUser(false).queue()
+        commandEvent.channel.sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max))
+            .reference(commandEvent.message).mentionRepliedUser(false).queue()
     }
 }

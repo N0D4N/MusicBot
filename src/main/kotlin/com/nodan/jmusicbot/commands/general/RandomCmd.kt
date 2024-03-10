@@ -20,7 +20,9 @@ class RandomCmd : Command() {
 
     override fun execute(commandEvent: CommandEvent) {
         if (commandEvent.args.isEmpty()) {
-            commandEvent.channel.sendMessage(MessageBuilder().append("You must provide 1 number, or 1 number prepended with \"new\" \"n\"").build()).queue()
+            commandEvent.channel.sendMessage(
+                MessageBuilder().append("You must provide 1 number, or 1 number prepended with \"new\" \"n\"").build()
+            ).queue()
         }
         val max: Int
 
@@ -28,15 +30,20 @@ class RandomCmd : Command() {
         try {
             max = Integer.parseUnsignedInt(if (strings.size == 2) strings[1] else strings[0])
         } catch (ex: NumberFormatException) {
-            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** wrong number format").build()).queue()
+            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** wrong number format").build())
+                .queue()
             return
         } catch (ex: Exception) {
-            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** unknown error").build()).queue()
+            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** unknown error").build())
+                .queue()
             return
         }
         val returnRand: Int
         val now = Instant.now().toEpochMilli()
-        if (!guildToRandom.containsKey(max) || (strings.size == 2 && (strings[0].equals("new", ignoreCase = true) || strings[0].equals("n", ignoreCase = true)))) {
+        if (!guildToRandom.containsKey(max) || (strings.size == 2 && (strings[0].equals(
+                "new", ignoreCase = true
+            ) || strings[0].equals("n", ignoreCase = true)))
+        ) {
             // We haven't randomed for such number, or should clear it per user request
             val randomNumbers = ConcurrentHashMap.newKeySet<Int>()
             returnRand = getRandomNumber(max)
@@ -64,7 +71,8 @@ class RandomCmd : Command() {
                 timestampToRandomNumbers.Timestamp = now
             }
         }
-        commandEvent.channel.sendMessage(formatNumber(returnRand, max)).reference(commandEvent.message).mentionRepliedUser(false).queue()
+        commandEvent.channel.sendMessage(formatNumber(returnRand, max)).reference(commandEvent.message)
+            .mentionRepliedUser(false).queue()
         if (now % 3L == 0L) {
             for ((key, value) in this.guildToRandom) {
                 if (now - value.Timestamp > SixHours) {

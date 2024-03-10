@@ -18,14 +18,17 @@ package com.jagrosh.jmusicbot;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.typesafe.config.*;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigException;
+import com.typesafe.config.ConfigFactory;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * 
@@ -34,7 +37,6 @@ import org.slf4j.LoggerFactory;
  */
 public class BotConfig
 {
-    private final static String CONTEXT = "Config";
     private final static String START_TOKEN = "/// START OF JMUSICBOT CONFIG ///";
     private final static String END_TOKEN = "/// END OF JMUSICBOT CONFIG ///";
     public final static Logger LOG = LoggerFactory.getLogger("Config");
