@@ -24,13 +24,14 @@ import com.jagrosh.jmusicbot.commands.dj.*;
 import com.jagrosh.jmusicbot.commands.general.*;
 import com.jagrosh.jmusicbot.commands.music.*;
 import com.jagrosh.jmusicbot.commands.owner.*;
-import com.jagrosh.jmusicbot.entities.Prompt;
-import com.jagrosh.jmusicbot.gui.GUI;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.awt.Color;
 import java.util.Arrays;
 import javax.security.auth.login.LoginException;
+
+import com.nodan.jmusicbot.commands.general.OldRandomCmd;
+import com.nodan.jmusicbot.commands.general.RandomCmd;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -70,15 +71,8 @@ public class JMusicBot
     
     private static void startBot()
     {
-        // create prompt to handle startup
-        Prompt prompt = new Prompt("JMusicBot");
-        
-        // startup checks
-        OtherUtil.checkVersion(prompt);
-        OtherUtil.checkJavaVersion(prompt);
-        
         // load config
-        BotConfig config = new BotConfig(prompt);
+        BotConfig config = new BotConfig();
         config.load();
         if(!config.isValid())
             return;
@@ -93,25 +87,6 @@ public class JMusicBot
         SettingsManager settings = new SettingsManager();
         Bot bot = new Bot(waiter, config, settings);
         CommandClient client = createCommandClient(config, settings, bot);
-        
-        
-        if(!prompt.isNoGUI())
-        {
-            try 
-            {
-                GUI gui = new GUI(bot);
-                bot.setGUI(gui);
-                gui.init();
-
-                LOG.info("Loaded config from " + config.getConfigLocation());
-            }
-            catch(Exception e)
-            {
-                LOG.error("Could not start GUI. If you are "
-                        + "running on a server or in a location where you cannot display a "
-                        + "window, please run in nogui mode using the -Dnogui=true flag.");
-            }
-        }
         
         // attempt to log in and start
         try
@@ -131,7 +106,7 @@ public class JMusicBot
             String unsupportedReason = OtherUtil.getUnsupportedBotReason(jda);
             if (unsupportedReason != null)
             {
-                prompt.alert(Prompt.Level.ERROR, "JMusicBot", "JMusicBot cannot be run on this Discord bot: " + unsupportedReason);
+                LOG.error("JMusicBot cannot be run on this Discord bot: " + unsupportedReason);
                 try{ Thread.sleep(5000);}catch(InterruptedException ignored){} // this is awful but until we have a better way...
                 jda.shutdown();
                 System.exit(1);
@@ -149,20 +124,20 @@ public class JMusicBot
         }
         catch (LoginException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", ex + "\nPlease make sure you are "
+            LOG.error(ex + "\nPlease make sure you are "
                     + "editing the correct config.txt file, and that you have used the "
                     + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }
         catch(IllegalArgumentException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", "Some aspect of the configuration is "
+            LOG.error("Some aspect of the configuration is "
                     + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }
         catch(ErrorResponseException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", ex + "\nInvalid reponse returned when "
+            LOG.error(ex + "\nInvalid reponse returned when "
                     + "attempting to connect, please make sure you're connected to the internet");
             System.exit(1);
         }
@@ -190,7 +165,8 @@ public class JMusicBot
                 .addCommands(aboutCommand,
                         new PingCommand(),
                         new SettingsCmd(bot),
-                        
+                        new OldRandomCmd(),
+                        new RandomCmd(),
                         new LyricsCmd(bot),
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
@@ -212,7 +188,7 @@ public class JMusicBot
                         new SkiptoCmd(bot),
                         new StopCmd(bot),
                         new VolumeCmd(bot),
-                        
+
                         new PrefixCmd(bot),
                         new QueueTypeCmd(bot),
                         new SetdjCmd(bot),
@@ -229,7 +205,7 @@ public class JMusicBot
                         new SetstatusCmd(bot),
                         new ShutdownCmd(bot)
                 );
-        
+
         // enable eval if applicable
         if(config.useEval())
             cb.addCommand(new EvalCmd(bot));

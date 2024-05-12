@@ -15,6 +15,7 @@
  */
 package com.jagrosh.jmusicbot.audio;
 
+import com.nodan.jmusicbot.audio.AnisonUpdateTask;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.queue.AbstractQueue;
 import com.jagrosh.jmusicbot.settings.QueueType;
@@ -31,10 +32,17 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.*;
+
+import com.jagrosh.jmusicbot.queue.FairQueue;
 import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import java.nio.ByteBuffer;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -61,7 +69,8 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     private final PlayerManager manager;
     private final AudioPlayer audioPlayer;
     private final long guildId;
-    
+    private Timer timer;
+
     private AudioFrame lastFrame;
     private AbstractQueue<QueuedTrack> queue;
 
@@ -188,6 +197,10 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
             if(!playFromDefault())
             {
                 manager.getBot().getNowplayingHandler().onTrackUpdate(null);
+                if(timer != null){
+                    this.timer.cancel();
+                    this.timer = null;
+                }
                 if(!manager.getBot().getConfig().getStay())
                     manager.getBot().closeAudioConnection(guildId);
                 // unpause, in the case when the player was paused and the track has been skipped.
@@ -211,7 +224,13 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     public void onTrackStart(AudioPlayer player, AudioTrack track) 
     {
         votes.clear();
-        manager.getBot().getNowplayingHandler().onTrackUpdate(track);
+        if(track.getInfo().uri.contains("anison") && this.timer == null){
+            this.timer = new Timer(true);
+            this.timer.schedule(new AnisonUpdateTask(this.manager.getBot()), 0, 10000);
+        }
+        else{
+            manager.getBot().getNowplayingHandler(). onTrackUpdate(track);
+        }
     }
 
     
@@ -238,7 +257,15 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
 
             try 
             {
-                eb.setTitle(track.getInfo().title, track.getInfo().uri);
+                String title;
+                if(track.getInfo().uri.contains("anison.fm")){
+                    title = jda.getPresence().getActivity().getName();
+                }
+                else
+                {
+                    title = track.getInfo().title;
+                }
+                eb.setTitle(title, track.getInfo().uri);
             }
             catch(Exception e) 
             {
