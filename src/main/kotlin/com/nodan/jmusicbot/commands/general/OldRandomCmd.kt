@@ -2,7 +2,6 @@ package com.nodan.jmusicbot.commands.general
 
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
-import net.dv8tion.jda.api.MessageBuilder
 
 class OldRandomCmd : Command() {
     init {
@@ -14,24 +13,23 @@ class OldRandomCmd : Command() {
 
     override fun execute(commandEvent: CommandEvent) {
         if (commandEvent.args.isEmpty()) {
-            commandEvent.channel.sendMessage(MessageBuilder("You must provide at least 1 argument").build()).queue()
+            commandEvent.channel.sendMessage("You must provide at least 1 argument").queue()
             return
         }
         val max: Int
         try {
-            max = Integer.parseUnsignedInt(commandEvent.args)
-        } catch (ex: NumberFormatException) {
-            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** wrong number format").build())
-                .queue()
+            max = commandEvent.args.toInt()
+        } catch (_: NumberFormatException) {
+            commandEvent.channel.sendMessage("**${commandEvent.member.effectiveName}** wrong number format").queue()
+
             return
-        } catch (ex: Exception) {
-            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** unknown error").build())
-                .queue()
+        } catch (_: Exception) {
+            commandEvent.channel.sendMessage("**${commandEvent.member.effectiveName}** unknown error").queue()
             return
         }
         if (max <= 1) {
-            commandEvent.channel.sendMessage(MessageBuilder("**" + commandEvent.member.effectiveName + "** number must be greater than 1").build())
-                .queue()
+            commandEvent.channel.sendMessage("**${commandEvent.member.effectiveName}** number must be greater than 1").queue()
+
             return
         }
         commandEvent.channel.sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max))

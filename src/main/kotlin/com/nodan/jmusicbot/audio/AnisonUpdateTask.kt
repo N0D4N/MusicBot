@@ -24,7 +24,7 @@ class AnisonUpdateTask(private val bot: Bot) : TimerTask() {
     }
 
     companion object {
-        private var url: URL = URI("https://anison.fm/status.php?widget=true").toURL()
+        private val url: URL = URI("https://anison.fm/status.php?widget=true").toURL()
 
         private val REMOVE_TAGS: Pattern = Pattern.compile("<.+?>")
         private val InLive: Pattern = Pattern.compile("В эфире: ")
