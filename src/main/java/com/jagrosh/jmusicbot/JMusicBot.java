@@ -15,31 +15,39 @@
  */
 package com.jagrosh.jmusicbot;
 
+import ch.qos.logback.classic.Level;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
-import com.jagrosh.jdautilities.examples.command.*;
-import com.jagrosh.jmusicbot.commands.admin.*;
+import com.jagrosh.jdautilities.examples.command.AboutCommand;
+import com.jagrosh.jdautilities.examples.command.PingCommand;
+import com.jagrosh.jmusicbot.commands.admin.QueueTypeCmd;
+import com.jagrosh.jmusicbot.commands.admin.SkipratioCmd;
 import com.jagrosh.jmusicbot.commands.dj.*;
-import com.jagrosh.jmusicbot.commands.general.*;
+import com.jagrosh.jmusicbot.commands.general.SettingsCmd;
 import com.jagrosh.jmusicbot.commands.music.*;
-import com.jagrosh.jmusicbot.commands.owner.*;
+import com.jagrosh.jmusicbot.commands.owner.AutoplaylistCmd;
+import com.jagrosh.jmusicbot.commands.owner.DebugCmd;
+import com.jagrosh.jmusicbot.commands.owner.EvalCmd;
+import com.jagrosh.jmusicbot.commands.owner.PlaylistCmd;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
-import java.awt.Color;
-import java.util.Arrays;
-import javax.security.auth.login.LoginException;
-
 import com.nodan.jmusicbot.commands.general.OldRandomCmd;
 import com.nodan.jmusicbot.commands.general.RandomCmd;
-import net.dv8tion.jda.api.*;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ch.qos.logback.classic.Level;
+
+import javax.security.auth.login.LoginException;
+import java.awt.*;
+import java.util.Arrays;
 
 /**
  *
@@ -167,15 +175,12 @@ public class JMusicBot
                         new SettingsCmd(bot),
                         new OldRandomCmd(),
                         new RandomCmd(),
-                        new LyricsCmd(bot),
                         new NowplayingCmd(bot),
                         new PlayCmd(bot),
                         new PlaylistsCmd(bot),
                         new QueueCmd(bot),
                         new RemoveCmd(bot),
                         new SearchCmd(bot),
-                        new SCSearchCmd(bot),
-                        new SeekCmd(bot),
                         new ShuffleCmd(bot),
                         new SkipCmd(bot),
 
@@ -187,23 +192,13 @@ public class JMusicBot
                         new RepeatCmd(bot),
                         new SkiptoCmd(bot),
                         new StopCmd(bot),
-                        new VolumeCmd(bot),
 
-                        new PrefixCmd(bot),
                         new QueueTypeCmd(bot),
-                        new SetdjCmd(bot),
                         new SkipratioCmd(bot),
-                        new SettcCmd(bot),
-                        new SetvcCmd(bot),
 
                         new AutoplaylistCmd(bot),
                         new DebugCmd(bot),
-                        new PlaylistCmd(bot),
-                        new SetavatarCmd(bot),
-                        new SetgameCmd(bot),
-                        new SetnameCmd(bot),
-                        new SetstatusCmd(bot),
-                        new ShutdownCmd(bot)
+                        new PlaylistCmd(bot)
                 );
 
         // enable eval if applicable

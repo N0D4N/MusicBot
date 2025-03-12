@@ -15,7 +15,6 @@
  */
 package com.jagrosh.jmusicbot.audio;
 
-import com.dunctebot.sourcemanagers.DuncteBotSources;
 import com.jagrosh.jmusicbot.Bot;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerRegistry;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -30,6 +29,7 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.clients.TvHtml5Embedded;
 import net.dv8tion.jda.api.entities.Guild;
 
 /**
@@ -49,8 +49,9 @@ public class PlayerManager extends DefaultAudioPlayerManager
     {
         TransformativeAudioSourceManager.createTransforms(bot.getConfig().getTransforms()).forEach(t -> registerSourceManager(t));
 
-        YoutubeAudioSourceManager yt = new YoutubeAudioSourceManager(true);
+        var yt = new YoutubeAudioSourceManager(true, new TvHtml5Embedded());
         yt.setPlaylistPageCount(bot.getConfig().getMaxYTPlaylistPages());
+        yt.useOauth2(bot.getConfig().getOauth2Token(), true);
         registerSourceManager(yt);
 
         registerSourceManager(SoundCloudAudioSourceManager.createDefault());
@@ -63,8 +64,6 @@ public class PlayerManager extends DefaultAudioPlayerManager
         registerSourceManager(new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY));
 
         AudioSourceManagers.registerLocalSource(this);
-
-        DuncteBotSources.registerAll(this, "en-US");
     }
     
     public Bot getBot()

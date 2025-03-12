@@ -15,7 +15,6 @@
  */
 package com.jagrosh.jmusicbot;
 
-import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import com.jagrosh.jmusicbot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -55,7 +54,8 @@ public class BotConfig
     private Config aliases, transforms;
 
     private boolean valid = false;
-    
+    private String oauth2Token;
+
     public BotConfig()
     {
     }
@@ -101,6 +101,7 @@ public class BotConfig
             aliases = config.getConfig("aliases");
             transforms = config.getConfig("transforms");
             skipratio = config.getDouble("skipratio");
+            oauth2Token = config.getString("oauth2token");
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
@@ -352,5 +353,9 @@ public class BotConfig
     public Config getTransforms()
     {
         return transforms;
+    }
+
+    public String getOauth2Token() {
+        return oauth2Token;
     }
 }

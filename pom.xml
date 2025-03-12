@@ -7,18 +7,13 @@
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>21</maven.compiler.release>
-        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
-        <kotlin.version>2.1.0</kotlin.version>
+        <maven.compiler.release>23</maven.compiler.release>
+        <kotlin.compiler.jvmTarget>23</kotlin.compiler.jvmTarget>
+        <kotlin.version>2.1.10</kotlin.version>
         <kotlin.compiler.languageVersion>2.1</kotlin.compiler.languageVersion>
     </properties>
 
     <repositories>
-        <repository>
-            <id>dv8tion</id>
-            <name>m2-dv8tion</name>
-            <url>https://m2.dv8tion.net/releases</url>
-        </repository>
         <repository>
             <id>central</id>
             <name>bintray</name>
@@ -51,6 +46,21 @@
             <name>Lavalink Repository</name>
             <url>https://maven.lavalink.dev/releases</url>
         </repository>
+        <repository>
+            <id>arbjergDev-snapshots</id>
+            <name>Lavalink Repository snapshots</name>
+            <url>https://maven.lavalink.dev/snapshots</url>
+        </repository>
+        <repository>
+            <id>AddWhateverIdYouWant</id>
+            <name>SameHere</name>
+            <url>https://dl.cloudsmith.io/public/arcane/archive/maven/</url>
+        </repository>
+        <repository>
+            <id>dv8tion</id>
+            <name>m2-dv8tion</name>
+            <url>https://m2.dv8tion.net/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -75,17 +85,7 @@
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>common</artifactId>
-            <version>1.11.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.jagrosh</groupId>
-            <artifactId>JLyrics</artifactId>
-            <version>master-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.dunctebot</groupId>
-            <artifactId>sourcemanagers</artifactId>
-            <version>1.9.0</version>
+            <version>1.11.5</version>
         </dependency>
 
         <!-- Misc Internal Dependencies -->
@@ -102,14 +102,14 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.15.3</version>
+            <version>1.18.3</version>
         </dependency>
 
         <!-- Testing Dependencies -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20180813</version>
+            <version>20240303</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -136,8 +136,7 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
-                <extensions>true</extensions> <!-- You can set this option
-            to automatically take information about lifecycles -->
+                <extensions>true</extensions> <!-- You can set this option to automatically take information about lifecycles -->
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -167,7 +166,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jvmTarget>21</jvmTarget>
+                    <jvmTarget>23</jvmTarget>
                     <args>
                         <arg>-Wextra</arg>
                         <arg>-Werror</arg>
@@ -178,7 +177,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.14.0</version>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by Maven -->
                     <execution>
