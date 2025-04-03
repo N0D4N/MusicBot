@@ -8,3 +8,4 @@ nb*.xml
 
 .idea
 JMusicBot.iml
+dependency-reduced-pom.xml

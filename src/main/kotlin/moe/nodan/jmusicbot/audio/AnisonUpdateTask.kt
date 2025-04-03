@@ -1,4 +1,4 @@
-package com.nodan.jmusicbot.audio
+package moe.nodan.jmusicbot.audio
 
 import com.jagrosh.jmusicbot.Bot
 import net.dv8tion.jda.api.entities.Activity
