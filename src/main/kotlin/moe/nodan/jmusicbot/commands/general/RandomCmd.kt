@@ -1,4 +1,4 @@
-package com.nodan.jmusicbot.commands.general
+package moe.nodan.jmusicbot.commands.general
 
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
