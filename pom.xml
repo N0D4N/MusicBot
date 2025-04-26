@@ -8,7 +8,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>24</maven.compiler.release>
-        <kotlin.compiler.jvmTarget>23</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>24</kotlin.compiler.jvmTarget>
         <kotlin.version>2.1.20</kotlin.version>
         <kotlin.compiler.languageVersion>2.1</kotlin.compiler.languageVersion>
     </properties>
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>common</artifactId>
-            <version>1.12.0</version>
+            <version>8db4e5dc023bedcc2a39a219e22e0637105d05d5-SNAPSHOT</version>
         </dependency>
 
         <!-- Misc Internal Dependencies -->
