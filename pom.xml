@@ -80,7 +80,7 @@
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>common</artifactId>
-            <version>8db4e5dc023bedcc2a39a219e22e0637105d05d5-SNAPSHOT</version>
+            <version>1.13.0</version>
         </dependency>
 
         <!-- Misc Internal Dependencies -->
