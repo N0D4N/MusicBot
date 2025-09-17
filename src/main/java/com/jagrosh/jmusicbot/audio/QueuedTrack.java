@@ -15,17 +15,16 @@
  */
 package com.jagrosh.jmusicbot.audio;
 
+import com.jagrosh.jmusicbot.queue.Queueable;
 import com.jagrosh.jmusicbot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import com.jagrosh.jmusicbot.queue.Queueable;
-import net.dv8tion.jda.api.entities.User;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class QueuedTrack implements Queueable
+public final class QueuedTrack implements Queueable
 {
     private final AudioTrack track;
     private final RequestMetadata requestMetadata;

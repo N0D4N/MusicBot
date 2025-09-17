@@ -9,8 +9,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>24</maven.compiler.release>
         <kotlin.compiler.jvmTarget>24</kotlin.compiler.jvmTarget>
-        <kotlin.version>2.1.20</kotlin.version>
-        <kotlin.compiler.languageVersion>2.1</kotlin.compiler.languageVersion>
+        <kotlin.version>2.2.20</kotlin.version>
+        <kotlin.compiler.languageVersion>2.2</kotlin.compiler.languageVersion>
     </properties>
 
     <repositories>
@@ -56,6 +56,11 @@
             <name>m2-dv8tion</name>
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
+        <repository>
+            <id>chew</id>
+            <name>m2-chew</name>
+            <url>https://m2.chew.pro/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -63,12 +68,12 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.4.1_353</version>
+            <version>5.6.1</version>
         </dependency>
         <dependency>
-            <groupId>com.jagrosh</groupId>
-            <artifactId>jda-utilities</artifactId>
-            <version>3.0.5</version>
+            <groupId>pw.chew</groupId>
+            <artifactId>jda-chewtils</artifactId>
+            <version>2.1</version>
             <type>pom</type>
         </dependency>
         <!-- Music Dependencies -->

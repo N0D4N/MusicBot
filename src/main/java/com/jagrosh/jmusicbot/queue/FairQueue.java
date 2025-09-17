@@ -23,7 +23,7 @@ import java.util.Set;
  * @author John Grosh (jagrosh)
  * @param <T>
  */
-public class FairQueue<T extends Queueable> extends AbstractQueue<T>
+public final class FairQueue<T extends Queueable> extends AbstractQueue<T>
 {
     public FairQueue(AbstractQueue<T> queue)
     {

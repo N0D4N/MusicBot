@@ -36,7 +36,7 @@ import net.dv8tion.jda.api.entities.Guild;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class PlayerManager extends DefaultAudioPlayerManager
+public final class PlayerManager extends DefaultAudioPlayerManager
 {
     private final Bot bot;
     

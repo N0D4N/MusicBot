@@ -32,11 +32,12 @@ import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import moe.nodan.jmusicbot.audio.AnisonUpdateTask;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
@@ -46,7 +47,7 @@ import java.util.*;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class AudioHandler extends AudioEventAdapter implements AudioSendHandler 
+public final class AudioHandler extends AudioEventAdapter implements AudioSendHandler
 {
     public final static String PLAY_EMOJI  = "\u25B6"; // ▶
     public final static String PAUSE_EMOJI = "\u23F8"; // ⏸
@@ -118,7 +119,8 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     
     public boolean isMusicPlaying(JDA jda)
     {
-        return guild(jda).getSelfMember().getVoiceState().inVoiceChannel() && audioPlayer.getPlayingTrack()!=null;
+        final var voiceState = this.guild(jda).getSelfMember().getVoiceState();
+        return voiceState != null && voiceState.inAudioChannel() && audioPlayer.getPlayingTrack() != null;
     }
     
     public Set<String> getVotes()
@@ -225,14 +227,16 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
 
     
     // Formatting
-    public Message getNowPlaying(JDA jda)
+    @Nullable
+    public MessageCreateData getNowPlaying(JDA jda)
     {
         if(isMusicPlaying(jda))
         {
             Guild guild = guild(jda);
             AudioTrack track = audioPlayer.getPlayingTrack();
-            MessageBuilder mb = new MessageBuilder();
-            mb.append(FormatUtil.filter(manager.getBot().getConfig().getSuccess()+" **Now Playing in "+guild.getSelfMember().getVoiceState().getChannel().getAsMention()+"...**"));
+
+            var mb = new MessageCreateBuilder();
+            mb.addContent(FormatUtil.filter(manager.getBot().getConfig().getSuccess()+" **Now Playing in "+guild.getSelfMember().getVoiceState().getChannel().getAsMention()+"...**"));
             EmbedBuilder eb = new EmbedBuilder();
             eb.setColor(guild.getSelfMember().getColor());
             RequestMetadata rm = getRequestMetadata();
@@ -281,10 +285,10 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
         else return null;
     }
     
-    public Message getNoMusicPlaying(JDA jda)
+    public MessageCreateData getNoMusicPlaying(JDA jda)
     {
         Guild guild = guild(jda);
-        return new MessageBuilder()
+        return new MessageCreateBuilder()
                 .setContent(FormatUtil.filter(manager.getBot().getConfig().getSuccess()+" **Now Playing...**"))
                 .setEmbeds(new EmbedBuilder()
                 .setTitle("No music playing")
@@ -297,29 +301,7 @@ public class AudioHandler extends AudioEventAdapter implements AudioSendHandler
     {
         return audioPlayer.isPaused() ? PAUSE_EMOJI : PLAY_EMOJI;
     }
-    
-    // Audio Send Handler methods
-    /*@Override
-    public boolean canProvide() 
-    {
-        if (lastFrame == null)
-            lastFrame = audioPlayer.provide();
 
-        return lastFrame != null;
-    }
-
-    @Override
-    public byte[] provide20MsAudio() 
-    {
-        if (lastFrame == null) 
-            lastFrame = audioPlayer.provide();
-
-        byte[] data = lastFrame != null ? lastFrame.getData() : null;
-        lastFrame = null;
-
-        return data;
-    }*/
-    
     @Override
     public boolean canProvide() 
     {

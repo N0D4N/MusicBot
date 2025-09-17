@@ -2,13 +2,14 @@ package moe.nodan.jmusicbot.commands.general
 
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
+import net.dv8tion.jda.api.interactions.InteractionContextType
 
 class OldRandomCmd : Command() {
     init {
         this.name = "old random"
         this.help = "get random number"
         this.aliases = arrayOf("or", "orandom", "rr")
-        this.guildOnly = true
+        this.contexts = arrayOf(InteractionContextType.GUILD);
     }
 
     override fun execute(commandEvent: CommandEvent) {
@@ -32,7 +33,7 @@ class OldRandomCmd : Command() {
 
             return
         }
-        commandEvent.channel.sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max))
-            .reference(commandEvent.message).mentionRepliedUser(false).queue()
+
+        commandEvent.channel.sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max)).queue();
     }
 }

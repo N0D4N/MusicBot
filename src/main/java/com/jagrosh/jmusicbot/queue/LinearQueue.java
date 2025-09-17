@@ -20,7 +20,7 @@ package com.jagrosh.jmusicbot.queue;
  * @author Wolfgang Schwendtbauer
  * @param <T>
  */
-public class LinearQueue<T extends Queueable> extends AbstractQueue<T>
+public final class LinearQueue<T extends Queueable> extends AbstractQueue<T>
 {
     public LinearQueue(AbstractQueue<T> queue)
     {
