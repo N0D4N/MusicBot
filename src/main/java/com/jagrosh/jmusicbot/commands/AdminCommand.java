@@ -17,6 +17,7 @@ package com.jagrosh.jmusicbot.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 
 /**
  *
@@ -34,6 +35,6 @@ public abstract class AdminCommand extends Command
                 return true;
             return event.getMember().hasPermission(Permission.MANAGE_SERVER);
         });
-        this.guildOnly = true;
+        this.contexts = new InteractionContextType[] {InteractionContextType.GUILD};
     }
 }

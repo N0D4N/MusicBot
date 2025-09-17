@@ -18,7 +18,7 @@ package com.jagrosh.jmusicbot.commands.music;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
-import com.jagrosh.jmusicbot.commands.MusicCommand;
+import moe.nodan.jmusicbot.commands.MusicCommand;
 
 /**
  *
@@ -32,8 +32,8 @@ public class ShuffleCmd extends MusicCommand
         this.name = "shuffle";
         this.help = "shuffles songs you have added";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.beListening = true;
-        this.bePlaying = true;
+        this.setBeListening(true);
+        this.setBePlaying(true);
     }
 
     @Override

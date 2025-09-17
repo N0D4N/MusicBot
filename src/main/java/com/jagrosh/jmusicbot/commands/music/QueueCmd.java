@@ -20,12 +20,12 @@ import com.jagrosh.jdautilities.menu.Paginator;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
 import com.jagrosh.jmusicbot.audio.QueuedTrack;
-import com.jagrosh.jmusicbot.commands.MusicCommand;
 import com.jagrosh.jmusicbot.settings.QueueType;
 import com.jagrosh.jmusicbot.settings.RepeatMode;
 import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.jagrosh.jmusicbot.utils.TimeUtil;
+import moe.nodan.jmusicbot.commands.MusicCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -48,7 +48,7 @@ public class QueueCmd extends MusicCommand
         this.help = "shows the current queue";
         this.arguments = "[pagenum]";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.bePlaying = true;
+        this.setBePlaying(true);
         this.botPermissions = new Permission[]{Permission.MESSAGE_ADD_REACTION,Permission.MESSAGE_EMBED_LINKS};
         builder = new Paginator.Builder()
                 .setColumns(1)
@@ -83,7 +83,7 @@ public class QueueCmd extends MusicCommand
             event.reply(built, m -> 
             {
                 if(nowp!=null)
-                    bot.getNowplayingHandler().setLastNPMessage(m);
+                    getBot().getNowplayingHandler().setLastNPMessage(m);
             });
             return;
         }

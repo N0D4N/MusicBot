@@ -21,7 +21,6 @@ import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
 import com.jagrosh.jmusicbot.audio.QueuedTrack;
 import com.jagrosh.jmusicbot.audio.RequestMetadata;
-import com.jagrosh.jmusicbot.commands.MusicCommand;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.jagrosh.jmusicbot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -29,6 +28,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import moe.nodan.jmusicbot.commands.MusicCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 
@@ -52,8 +52,8 @@ public class SearchCmd extends MusicCommand
         this.aliases = bot.getConfig().getAliases(this.name);
         this.arguments = "<query>";
         this.help = "searches Youtube for a provided query";
-        this.beListening = true;
-        this.bePlaying = false;
+        this.setBeListening(true);
+        this.setBePlaying(false);
         this.botPermissions = new Permission[]{Permission.MESSAGE_EMBED_LINKS};
         builder = new OrderedMenu.Builder()
                 .allowTextInput(true)
@@ -71,7 +71,7 @@ public class SearchCmd extends MusicCommand
             return;
         }
         event.reply(searchingEmoji+" Searching... `["+event.getArgs()+"]`", 
-                m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), searchPrefix + event.getArgs(), new ResultHandler(m,event)));
+                m -> getBot().getPlayerManager().loadItemOrdered(event.getGuild(), searchPrefix + event.getArgs(), new ResultHandler(m,event)));
     }
     
     private final class ResultHandler implements AudioLoadResultHandler
@@ -88,10 +88,10 @@ public class SearchCmd extends MusicCommand
         @Override
         public void trackLoaded(AudioTrack track)
         {
-            if(bot.getConfig().isTooLong(track))
+            if(getBot().getConfig().isTooLong(track))
             {
                 m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
-                        + TimeUtil.formatTime(track.getDuration())+"` > `"+bot.getConfig().getMaxTime()+"`")).queue();
+                        + TimeUtil.formatTime(track.getDuration())+"` > `"+ getBot().getConfig().getMaxTime()+"`")).queue();
                 return;
             }
             AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
@@ -110,10 +110,10 @@ public class SearchCmd extends MusicCommand
                     .setSelection((msg,i) -> 
                     {
                         AudioTrack track = playlist.getTracks().get(i-1);
-                        if(bot.getConfig().isTooLong(track))
+                        if(getBot().getConfig().isTooLong(track))
                         {
                             event.replyWarning("This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
-                                    + TimeUtil.formatTime(track.getDuration())+"` > `"+bot.getConfig().getMaxTime()+"`");
+                                    + TimeUtil.formatTime(track.getDuration())+"` > `"+ getBot().getConfig().getMaxTime()+"`");
                             return;
                         }
                         AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();

@@ -45,8 +45,8 @@ public class PlaynextCmd extends DJCommand
         this.arguments = "<title|URL>";
         this.help = "plays a single song next";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.beListening = true;
-        this.bePlaying = false;
+        this.setBeListening(true);
+        this.setBePlaying(false);
     }
     
     @Override
@@ -60,7 +60,7 @@ public class PlaynextCmd extends DJCommand
         String args = event.getArgs().startsWith("<") && event.getArgs().endsWith(">") 
                 ? event.getArgs().substring(1,event.getArgs().length()-1) 
                 : event.getArgs().isEmpty() ? event.getMessage().getAttachments().get(0).getUrl() : event.getArgs();
-        event.reply(loadingEmoji+" Loading... `["+args+"]`", m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), args, new ResultHandler(m,event,false)));
+        event.reply(loadingEmoji+" Loading... `["+args+"]`", m -> getBot().getPlayerManager().loadItemOrdered(event.getGuild(), args, new ResultHandler(m,event,false)));
     }
     
     private final class ResultHandler implements AudioLoadResultHandler
@@ -78,10 +78,10 @@ public class PlaynextCmd extends DJCommand
         
         private void loadSingle(AudioTrack track)
         {
-            if(bot.getConfig().isTooLong(track))
+            if(getBot().getConfig().isTooLong(track))
             {
                 m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" This track (**"+track.getInfo().title+"**) is longer than the allowed maximum: `"
-                        + TimeUtil.formatTime(track.getDuration())+"` > `"+ TimeUtil.formatTime(bot.getConfig().getMaxSeconds()*1000)+"`")).queue();
+                        + TimeUtil.formatTime(track.getDuration())+"` > `"+ TimeUtil.formatTime(getBot().getConfig().getMaxSeconds()*1000)+"`")).queue();
                 return;
             }
             AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
@@ -116,7 +116,7 @@ public class PlaynextCmd extends DJCommand
             if(ytsearch)
                 m.editMessage(FormatUtil.filter(event.getClient().getWarning()+" No results found for `"+event.getArgs()+"`.")).queue();
             else
-                bot.getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:"+event.getArgs(), new ResultHandler(m,event,true));
+                getBot().getPlayerManager().loadItemOrdered(event.getGuild(), "ytsearch:"+event.getArgs(), new ResultHandler(m,event,true));
         }
 
         @Override
