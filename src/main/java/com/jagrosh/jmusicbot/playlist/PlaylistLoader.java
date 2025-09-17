@@ -22,6 +22,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class PlaylistLoader
+public final class PlaylistLoader
 {
     private final BotConfig config;
     
@@ -139,7 +140,7 @@ public class PlaylistLoader
     }
     
     
-    public class Playlist
+    public final class Playlist
     {
         private final String name;
         private final List<String> items;
@@ -264,7 +265,7 @@ public class PlaylistLoader
         }
     }
     
-    public class PlaylistLoadError
+    public final class PlaylistLoadError
     {
         private final int number;
         private final String item;

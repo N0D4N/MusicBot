@@ -2,6 +2,7 @@ package moe.nodan.jmusicbot.commands.general
 
 import com.jagrosh.jdautilities.command.Command
 import com.jagrosh.jdautilities.command.CommandEvent
+import net.dv8tion.jda.api.interactions.InteractionContextType
 import java.security.SecureRandom
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
@@ -14,7 +15,7 @@ class RandomCmd : Command() {
         this.name = "random"
         this.aliases = arrayOf("r")
         this.help = "get random number non-repeated number"
-        this.guildOnly = true
+        this.contexts = arrayOf(InteractionContextType.GUILD);
     }
 
     override fun execute(commandEvent: CommandEvent) {
@@ -65,8 +66,7 @@ class RandomCmd : Command() {
                 timestampToRandomNumbers.timestamp = now
             }
         }
-        commandEvent.channel.sendMessage(formatNumber(returnRand, max)).reference(commandEvent.message)
-            .mentionRepliedUser(false).queue()
+        commandEvent.channel.sendMessage(formatNumber(returnRand, max)).queue()
         if (now % 3L == 0L) {
             for ((key, value) in this.guildToRandom) {
                 if (now - value.timestamp > SIXHOURS) {

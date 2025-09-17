@@ -16,18 +16,19 @@
 package com.jagrosh.jmusicbot.settings;
 
 import com.jagrosh.jdautilities.command.GuildSettingsProvider;
-import java.util.Collection;
-import java.util.Collections;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class Settings implements GuildSettingsProvider
+public final class Settings implements GuildSettingsProvider
 {
     private final SettingsManager manager;
     protected long textId;
@@ -140,32 +141,7 @@ public class Settings implements GuildSettingsProvider
     {
         return prefix == null ? Collections.emptySet() : Collections.singleton(prefix);
     }
-    
-    // Setters
-    public void setTextChannel(TextChannel tc)
-    {
-        this.textId = tc == null ? 0 : tc.getIdLong();
-        this.manager.writeSettings();
-    }
-    
-    public void setVoiceChannel(VoiceChannel vc)
-    {
-        this.voiceId = vc == null ? 0 : vc.getIdLong();
-        this.manager.writeSettings();
-    }
-    
-    public void setDJRole(Role role)
-    {
-        this.roleId = role == null ? 0 : role.getIdLong();
-        this.manager.writeSettings();
-    }
-    
-    public void setVolume(int volume)
-    {
-        this.volume = volume;
-        this.manager.writeSettings();
-    }
-    
+
     public void setDefaultPlaylist(String defaultPlaylist)
     {
         this.defaultPlaylist = defaultPlaylist;
@@ -175,12 +151,6 @@ public class Settings implements GuildSettingsProvider
     public void setRepeatMode(RepeatMode mode)
     {
         this.repeatMode = mode;
-        this.manager.writeSettings();
-    }
-    
-    public void setPrefix(String prefix)
-    {
-        this.prefix = prefix;
         this.manager.writeSettings();
     }
 

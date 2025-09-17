@@ -20,21 +20,22 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.typesafe.config.Config;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class TransformativeAudioSourceManager extends YoutubeAudioSourceManager
+public final class TransformativeAudioSourceManager extends YoutubeAudioSourceManager
 {
     private final static Logger log = LoggerFactory.getLogger(TransformativeAudioSourceManager.class);
     private final String name, regex, replacement, selector, format;

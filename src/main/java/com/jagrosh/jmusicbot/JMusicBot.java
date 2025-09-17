@@ -24,7 +24,6 @@ import com.jagrosh.jdautilities.examples.command.PingCommand;
 import com.jagrosh.jmusicbot.commands.admin.QueueTypeCmd;
 import com.jagrosh.jmusicbot.commands.admin.SkipratioCmd;
 import com.jagrosh.jmusicbot.commands.dj.*;
-import com.jagrosh.jmusicbot.commands.general.SettingsCmd;
 import com.jagrosh.jmusicbot.commands.music.*;
 import com.jagrosh.jmusicbot.commands.owner.AutoplaylistCmd;
 import com.jagrosh.jmusicbot.commands.owner.DebugCmd;
@@ -34,6 +33,7 @@ import com.jagrosh.jmusicbot.settings.SettingsManager;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import moe.nodan.jmusicbot.commands.general.OldRandomCmd;
 import moe.nodan.jmusicbot.commands.general.RandomCmd;
+import moe.nodan.jmusicbot.commands.general.SettingsCmd;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -53,10 +53,10 @@ import java.util.Arrays;
  *
  * @author John Grosh (jagrosh)
  */
-public class JMusicBot 
+public final class JMusicBot
 {
     public final static Logger LOG = LoggerFactory.getLogger(JMusicBot.class);
-    public final static Permission[] RECOMMENDED_PERMS = {Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
+    public final static Permission[] RECOMMENDED_PERMS = {Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
                                 Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EXT_EMOJI,
                                 Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE};
     public final static GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES};
@@ -101,7 +101,7 @@ public class JMusicBot
         {
             JDA jda = JDABuilder.create(config.getToken(), Arrays.asList(INTENTS))
                     .enableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
-                    .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOTE, CacheFlag.ONLINE_STATUS)
+                    .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOJI, CacheFlag.ONLINE_STATUS)
                     .setActivity(config.isGameNone() ? null : Activity.playing("loading..."))
                     .setStatus(config.getStatus()==OnlineStatus.INVISIBLE || config.getStatus()==OnlineStatus.OFFLINE 
                             ? OnlineStatus.INVISIBLE : OnlineStatus.DO_NOT_DISTURB)
@@ -130,24 +130,25 @@ public class JMusicBot
                         + "on https://discord.com/developers/applications/" + jda.getSelfUser().getId() + "/bot");
             }
         }
-        catch (LoginException ex)
+        catch (Exception ex)
         {
-            LOG.error(ex + "\nPlease make sure you are "
-                    + "editing the correct config.txt file, and that you have used the "
-                    + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
-            System.exit(1);
-        }
-        catch(IllegalArgumentException ex)
-        {
-            LOG.error("Some aspect of the configuration is "
-                    + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
-            System.exit(1);
-        }
-        catch(ErrorResponseException ex)
-        {
-            LOG.error(ex + "\nInvalid reponse returned when "
-                    + "attempting to connect, please make sure you're connected to the internet");
-            System.exit(1);
+            if (ex instanceof LoginException) {
+                LOG.error(ex + "\nPlease make sure you are "
+                        + "editing the correct config.txt file, and that you have used the "
+                        + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
+                System.exit(1);
+            }
+            else if (ex instanceof IllegalArgumentException) {
+                LOG.error("Some aspect of the configuration is "
+                        + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
+                System.exit(1);
+            }
+            else if (ex instanceof ErrorResponseException) {
+                LOG.error(ex + "\nInvalid reponse returned when "
+                        + "attempting to connect, please make sure you're connected to the internet");
+                System.exit(1);
+
+            }
         }
     }
     

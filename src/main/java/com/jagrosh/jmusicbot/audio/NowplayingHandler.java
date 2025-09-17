@@ -17,25 +17,22 @@ package com.jagrosh.jmusicbot.audio;
 
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.entities.Pair;
-import com.jagrosh.jmusicbot.settings.Settings;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.exceptions.PermissionException;
-import net.dv8tion.jda.api.exceptions.RateLimitedException;
 
 /**
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class NowplayingHandler
+public final class NowplayingHandler
 {
     private final Bot bot;
     private final HashMap<Long,Pair<Long,Long>> lastNP; // guild -> channel,message
@@ -54,7 +51,7 @@ public class NowplayingHandler
     
     public void setLastNPMessage(Message m)
     {
-        lastNP.put(m.getGuild().getIdLong(), new Pair<>(m.getTextChannel().getIdLong(), m.getIdLong()));
+        lastNP.put(m.getGuild().getIdLong(), new Pair<>(m.getChannel().getIdLong(), m.getIdLong()));
     }
     
     public void clearLastNPMessage(Guild guild)
@@ -74,14 +71,14 @@ public class NowplayingHandler
                 continue;
             }
             Pair<Long,Long> pair = lastNP.get(guildId);
-            TextChannel tc = guild.getTextChannelById(pair.getKey());
+            TextChannel tc = guild.getTextChannelById(pair.key());
             if(tc==null)
             {
                 toRemove.add(guildId);
                 continue;
             }
             AudioHandler handler = (AudioHandler)guild.getAudioManager().getSendingHandler();
-            Message msg = handler.getNowPlaying(bot.getJDA());
+            var msg = handler.getNowPlaying(bot.getJDA());
             if(msg==null)
             {
                 msg = handler.getNoMusicPlaying(bot.getJDA());
@@ -89,7 +86,7 @@ public class NowplayingHandler
             }
             try 
             {
-                tc.editMessageById(pair.getValue(), msg).queue(m->{}, t -> lastNP.remove(guildId));
+                tc.editMessageById(pair.value(), msg.getContent()).queue(m->{}, t -> lastNP.remove(guildId));
             } 
             catch(Exception e) 
             {
@@ -105,7 +102,10 @@ public class NowplayingHandler
         // update bot status if applicable
         if(bot.getConfig().getSongInStatus())
         {
-            if(track!=null && bot.getJDA().getGuilds().stream().filter(g -> g.getSelfMember().getVoiceState().inVoiceChannel()).count()<=1)
+            if(track!=null && bot.getJDA().getGuilds().stream().filter(g -> {
+                final var voiceState = g.getSelfMember().getVoiceState();
+                return voiceState != null && voiceState.inAudioChannel();
+            }).count()<= 1)
                 bot.getJDA().getPresence().setActivity(Activity.listening(track.getInfo().title));
             else
                 bot.resetGame();
@@ -117,7 +117,7 @@ public class NowplayingHandler
         Pair<Long,Long> pair = lastNP.get(guild.getIdLong());
         if(pair==null)
             return;
-        if(pair.getValue() == messageId)
+        if(pair.value() == messageId)
             lastNP.remove(guild.getIdLong());
     }
 }

@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  *
  * @author John Grosh (john.a.grosh@gmail.com)
  */
-public class RequestMetadata
+public final class RequestMetadata
 {
     public static final RequestMetadata EMPTY = new RequestMetadata(null, null);
     

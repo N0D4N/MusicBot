@@ -63,7 +63,7 @@ public class PlaynextCmd extends DJCommand
         event.reply(loadingEmoji+" Loading... `["+args+"]`", m -> bot.getPlayerManager().loadItemOrdered(event.getGuild(), args, new ResultHandler(m,event,false)));
     }
     
-    private class ResultHandler implements AudioLoadResultHandler
+    private final class ResultHandler implements AudioLoadResultHandler
     {
         private final Message m;
         private final CommandEvent event;

@@ -124,7 +124,7 @@ public class TimeUtil
         return time;
     }
 
-    public static class SeekTime
+    public static final class SeekTime
     {
         public final long milliseconds;
         public final boolean relative;
