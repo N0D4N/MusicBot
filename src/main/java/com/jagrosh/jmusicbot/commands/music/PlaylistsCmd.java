@@ -15,10 +15,12 @@
  */
 package com.jagrosh.jmusicbot.commands.music;
 
-import java.util.List;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
-import com.jagrosh.jmusicbot.commands.MusicCommand;
+import moe.nodan.jmusicbot.commands.MusicCommand;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
+
+import java.util.List;
 
 /**
  *
@@ -32,22 +34,22 @@ public class PlaylistsCmd extends MusicCommand
         this.name = "playlists";
         this.help = "shows the available playlists";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.guildOnly = true;
-        this.beListening = false;
-        this.beListening = false;
+        this.contexts = new InteractionContextType[] {InteractionContextType.GUILD};
+        this.setBeListening(false);
+        this.setBeListening(false);
     }
     
     @Override
     public void doCommand(CommandEvent event) 
     {
-        if(!bot.getPlaylistLoader().folderExists())
-            bot.getPlaylistLoader().createFolder();
-        if(!bot.getPlaylistLoader().folderExists())
+        if(!getBot().getPlaylistLoader().folderExists())
+            getBot().getPlaylistLoader().createFolder();
+        if(!getBot().getPlaylistLoader().folderExists())
         {
             event.reply(event.getClient().getWarning()+" Playlists folder does not exist and could not be created!");
             return;
         }
-        List<String> list = bot.getPlaylistLoader().getPlaylistNames();
+        List<String> list = getBot().getPlaylistLoader().getPlaylistNames();
         if(list==null)
             event.reply(event.getClient().getError()+" Failed to load available playlists!");
         else if(list.isEmpty())

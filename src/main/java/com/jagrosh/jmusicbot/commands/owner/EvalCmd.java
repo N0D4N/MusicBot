@@ -19,6 +19,7 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.commands.OwnerCommand;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -39,7 +40,7 @@ public class EvalCmd extends OwnerCommand
         this.help = "evaluates nashorn code";
         this.aliases = bot.getConfig().getAliases(this.name);
         this.engine = bot.getConfig().getEvalEngine();
-        this.guildOnly = false;
+        this.contexts = new InteractionContextType[] {InteractionContextType.GUILD, InteractionContextType.BOT_DM};
     }
     
     @Override

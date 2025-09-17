@@ -18,9 +18,7 @@ package com.jagrosh.jmusicbot.commands.music;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.audio.AudioHandler;
-import com.jagrosh.jmusicbot.audio.RequestMetadata;
-import com.jagrosh.jmusicbot.commands.MusicCommand;
-import com.jagrosh.jmusicbot.utils.FormatUtil;
+import moe.nodan.jmusicbot.commands.MusicCommand;
 
 /**
  *
@@ -34,8 +32,8 @@ public class SkipCmd extends MusicCommand
         this.name = "skip";
         this.help = "votes to skip the current song";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.beListening = true;
-        this.bePlaying = true;
+        this.setBeListening(true);
+        this.setBePlaying(true);
     }
 
     @Override

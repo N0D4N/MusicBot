@@ -15,13 +15,15 @@
  */
 package com.jagrosh.jmusicbot.commands.owner;
 
-import java.io.IOException;
-import java.util.List;
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.commands.OwnerCommand;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -33,7 +35,7 @@ public class PlaylistCmd extends OwnerCommand
     public PlaylistCmd(Bot bot)
     {
         this.bot = bot;
-        this.guildOnly = false;
+        this.contexts = new InteractionContextType[] {InteractionContextType.GUILD};
         this.name = "playlist";
         this.arguments = "<append|delete|make|setdefault>";
         this.help = "playlist management";
@@ -65,7 +67,7 @@ public class PlaylistCmd extends OwnerCommand
             this.aliases = new String[]{"create"};
             this.help = "makes a new playlist";
             this.arguments = "<name>";
-            this.guildOnly = false;
+            this.contexts = new InteractionContextType[] {InteractionContextType.GUILD};
         }
 
         @Override
@@ -102,7 +104,7 @@ public class PlaylistCmd extends OwnerCommand
             this.aliases = new String[]{"remove"};
             this.help = "deletes an existing playlist";
             this.arguments = "<name>";
-            this.guildOnly = false;
+            this.contexts = new InteractionContextType[] {InteractionContextType.GUILD};
         }
 
         @Override
@@ -134,7 +136,7 @@ public class PlaylistCmd extends OwnerCommand
             this.aliases = new String[]{"add"};
             this.help = "appends songs to an existing playlist";
             this.arguments = "<name> <URL> | <URL> | ...";
-            this.guildOnly = false;
+            this.contexts = new InteractionContextType[] {InteractionContextType.GUILD};
         }
 
         @Override
@@ -183,7 +185,7 @@ public class PlaylistCmd extends OwnerCommand
             this.name = "setdefault";
             this.aliases = new String[]{"default"};
             this.arguments = "<playlistname|NONE>";
-            this.guildOnly = true;
+            this.contexts = new InteractionContextType[] {InteractionContextType.GUILD};
         }
     }
     
@@ -194,7 +196,7 @@ public class PlaylistCmd extends OwnerCommand
             this.name = "all";
             this.aliases = new String[]{"available","list"};
             this.help = "lists all available playlists";
-            this.guildOnly = true;
+            this.contexts = new InteractionContextType[] {InteractionContextType.GUILD};
         }
 
         @Override
