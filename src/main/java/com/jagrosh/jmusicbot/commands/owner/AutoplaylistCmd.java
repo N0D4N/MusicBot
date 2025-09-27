@@ -40,30 +40,30 @@ public class AutoplaylistCmd extends OwnerCommand
     }
 
     @Override
-    public void execute(CommandEvent event) 
+    public void execute(CommandEvent commandEvent)
     {
-        if(event.getArgs().isEmpty())
+        if(commandEvent.getArgs().isEmpty())
         {
-            event.reply(event.getClient().getError()+" Please include a playlist name or NONE");
+            commandEvent.reply(commandEvent.getClient().getError()+" Please include a playlist name or NONE");
             return;
         }
-        if(event.getArgs().equalsIgnoreCase("none"))
+        if(commandEvent.getArgs().equalsIgnoreCase("none"))
         {
-            Settings settings = event.getClient().getSettingsFor(event.getGuild());
+            Settings settings = commandEvent.getClient().getSettingsFor(commandEvent.getGuild());
             settings.setDefaultPlaylist(null);
-            event.reply(event.getClient().getSuccess()+" Cleared the default playlist for **"+event.getGuild().getName()+"**");
+            commandEvent.reply(commandEvent.getClient().getSuccess()+" Cleared the default playlist for **"+ commandEvent.getGuild().getName()+"**");
             return;
         }
-        String pname = event.getArgs().replaceAll("\\s+", "_");
+        var pname = commandEvent.getArgs().replaceAll("\\s+", "_");
         if(bot.getPlaylistLoader().getPlaylist(pname)==null)
         {
-            event.reply(event.getClient().getError()+" Could not find `"+pname+".txt`!");
+            commandEvent.reply(commandEvent.getClient().getError()+" Could not find `"+pname+".txt`!");
         }
         else
         {
-            Settings settings = event.getClient().getSettingsFor(event.getGuild());
+            Settings settings = commandEvent.getClient().getSettingsFor(commandEvent.getGuild());
             settings.setDefaultPlaylist(pname);
-            event.reply(event.getClient().getSuccess()+" The default playlist for **"+event.getGuild().getName()+"** is now `"+pname+"`");
+            commandEvent.reply(commandEvent.getClient().getSuccess()+" The default playlist for **"+ commandEvent.getGuild().getName()+"** is now `"+pname+"`");
         }
     }
 }

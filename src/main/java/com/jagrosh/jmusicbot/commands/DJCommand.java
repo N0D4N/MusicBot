@@ -20,7 +20,6 @@ import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.settings.Settings;
 import moe.nodan.jmusicbot.commands.MusicCommand;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Role;
 
 /**
  *
@@ -43,7 +42,7 @@ public abstract class DJCommand extends MusicCommand
         if(event.getMember().hasPermission(Permission.MANAGE_SERVER))
             return true;
         Settings settings = event.getClient().getSettingsFor(event.getGuild());
-        Role dj = settings.getRole(event.getGuild());
+        var dj = settings.getRole(event.getGuild());
         return dj!=null && (event.getMember().getRoles().contains(dj) || dj.getIdLong()==event.getGuild().getIdLong());
     }
 }

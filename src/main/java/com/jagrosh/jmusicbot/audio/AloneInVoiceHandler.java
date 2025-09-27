@@ -22,7 +22,6 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +33,7 @@ public class AloneInVoiceHandler
 {
     private final Bot bot;
     private final HashMap<Long, Instant> aloneSince = new HashMap<>();
-    private long aloneTimeUntilStop = 0;
+    private long aloneTimeUntilStop;
 
     public AloneInVoiceHandler(Bot bot)
     {
@@ -44,18 +43,18 @@ public class AloneInVoiceHandler
     public void init()
     {
         aloneTimeUntilStop = bot.getConfig().getAloneTimeUntilStop();
-        if(aloneTimeUntilStop > 0)
-            bot.getThreadpool().scheduleWithFixedDelay(() -> check(), 0, 5, TimeUnit.SECONDS);
+        if(aloneTimeUntilStop > 0L)
+            bot.getThreadpool().scheduleWithFixedDelay(() -> this.check(), 0L, 5L, TimeUnit.SECONDS);
     }
     
     private void check()
     {
         Set<Long> toRemove = new HashSet<>();
-        for(Map.Entry<Long, Instant> entrySet: aloneSince.entrySet())
+        for(var entrySet: aloneSince.entrySet())
         {
             if(entrySet.getValue().getEpochSecond() > Instant.now().getEpochSecond() - aloneTimeUntilStop) continue;
 
-            Guild guild = bot.getJDA().getGuildById(entrySet.getKey());
+            var guild = bot.getJDA().getGuildById(entrySet.getKey());
 
             if(guild == null)
             {
@@ -75,11 +74,11 @@ public class AloneInVoiceHandler
     {
         if(aloneTimeUntilStop <= 0) return;
 
-        Guild guild = event.getEntity().getGuild();
-        if(!bot.getPlayerManager().hasHandler(guild)) return;
+        var guild = event.getEntity().getGuild();
+        if(!PlayerManager.hasHandler(guild)) return;
 
-        boolean alone = isAlone(guild);
-        boolean inList = aloneSince.containsKey(guild.getIdLong());
+        var alone = AloneInVoiceHandler.isAlone(guild);
+        var inList = aloneSince.containsKey(guild.getIdLong());
 
         if(!alone && inList)
             aloneSince.remove(guild.getIdLong());
@@ -87,7 +86,7 @@ public class AloneInVoiceHandler
             aloneSince.put(guild.getIdLong(), Instant.now());
     }
 
-    private boolean isAlone(Guild guild)
+    private static boolean isAlone(Guild guild)
     {
         if(guild.getAudioManager().getConnectedChannel() == null) return false;
         return guild.getAudioManager().getConnectedChannel().getMembers().stream()

@@ -32,15 +32,15 @@ public class ShuffleCmd extends MusicCommand
         this.name = "shuffle";
         this.help = "shuffles songs you have added";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.setBeListening(true);
-        this.setBePlaying(true);
+        this.beListening = true;
+        this.bePlaying = true;
     }
 
     @Override
     public void doCommand(CommandEvent event) 
     {
-        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
-        int s = handler.getQueue().shuffle(event.getAuthor().getIdLong());
+        var handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        var s = handler.getQueue().shuffle(event.getAuthor().getIdLong());
         switch (s) 
         {
             case 0:

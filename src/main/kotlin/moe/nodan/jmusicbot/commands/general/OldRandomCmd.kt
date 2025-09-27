@@ -9,7 +9,7 @@ class OldRandomCmd : Command() {
         this.name = "old random"
         this.help = "get random number"
         this.aliases = arrayOf("or", "orandom", "rr")
-        this.contexts = arrayOf(InteractionContextType.GUILD);
+        this.contexts = arrayOf(InteractionContextType.GUILD)
     }
 
     override fun execute(commandEvent: CommandEvent) {
@@ -34,6 +34,6 @@ class OldRandomCmd : Command() {
             return
         }
 
-        commandEvent.channel.sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max)).queue();
+        commandEvent.channel.sendMessage(RandomCmd.formatNumber(RandomCmd.getRandomNumber(max), max)).queue()
     }
 }

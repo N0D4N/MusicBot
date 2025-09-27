@@ -32,16 +32,15 @@ public class SkipCmd extends MusicCommand
         this.name = "skip";
         this.help = "votes to skip the current song";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.setBeListening(true);
-        this.setBePlaying(true);
+        this.beListening = true;
+        this.bePlaying = true;
     }
 
     @Override
     public void doCommand(CommandEvent event) 
     {
-        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        var handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         event.reply(event.getClient().getSuccess()+" Skipped **"+handler.getPlayer().getPlayingTrack().getInfo().title+"**");
         handler.getPlayer().stopTrack();
     }
-    
 }

@@ -64,20 +64,20 @@ public final class NowplayingHandler
         Set<Long> toRemove = new HashSet<>();
         for(long guildId: lastNP.keySet())
         {
-            Guild guild = bot.getJDA().getGuildById(guildId);
+            var guild = bot.getJDA().getGuildById(guildId);
             if(guild==null)
             {
                 toRemove.add(guildId);
                 continue;
             }
-            Pair<Long,Long> pair = lastNP.get(guildId);
-            TextChannel tc = guild.getTextChannelById(pair.key());
+            var pair = lastNP.get(guildId);
+            var tc = guild.getTextChannelById(pair.key());
             if(tc==null)
             {
                 toRemove.add(guildId);
                 continue;
             }
-            AudioHandler handler = (AudioHandler)guild.getAudioManager().getSendingHandler();
+            var handler = (AudioHandler)guild.getAudioManager().getSendingHandler();
             var msg = handler.getNowPlaying(bot.getJDA());
             if(msg==null)
             {
@@ -114,7 +114,7 @@ public final class NowplayingHandler
     
     public void onMessageDelete(Guild guild, long messageId)
     {
-        Pair<Long,Long> pair = lastNP.get(guild.getIdLong());
+        var pair = lastNP.get(guild.getIdLong());
         if(pair==null)
             return;
         if(pair.value() == messageId)

@@ -42,7 +42,7 @@ public class RepeatCmd extends DJCommand
     @Override
     protected void execute(CommandEvent event) 
     {
-        String args = event.getArgs();
+        var args = event.getArgs();
         RepeatMode value;
         Settings settings = event.getClient().getSettingsFor(event.getGuild());
         if(args.isEmpty())

@@ -44,11 +44,11 @@ public class NowplayingCmd extends MusicCommand
         if(m==null)
         {
             event.reply(handler.getNoMusicPlaying(event.getJDA()));
-            getBot().getNowplayingHandler().clearLastNPMessage(event.getGuild());
+            bot.getNowplayingHandler().clearLastNPMessage(event.getGuild());
         }
         else
         {
-            event.reply(m, msg -> getBot().getNowplayingHandler().setLastNPMessage(msg));
+            event.reply(m, msg -> bot.getNowplayingHandler().setLastNPMessage(msg));
         }
     }
 }

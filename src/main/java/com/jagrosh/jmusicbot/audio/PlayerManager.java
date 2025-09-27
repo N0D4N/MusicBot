@@ -17,7 +17,6 @@ package com.jagrosh.jmusicbot.audio;
 
 import com.jagrosh.jmusicbot.Bot;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerRegistry;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
@@ -47,21 +46,21 @@ public final class PlayerManager extends DefaultAudioPlayerManager
     
     public void init()
     {
-        TransformativeAudioSourceManager.createTransforms(bot.getConfig().getTransforms()).forEach(t -> registerSourceManager(t));
+        TransformativeAudioSourceManager.createTransforms(bot.getConfig().getTransforms()).forEach(this::registerSourceManager);
 
         var yt = new YoutubeAudioSourceManager(true, new TvHtml5Embedded());
         yt.setPlaylistPageCount(bot.getConfig().getMaxYTPlaylistPages());
         yt.useOauth2(bot.getConfig().getOauth2Token(), true);
-        registerSourceManager(yt);
+        this.registerSourceManager(yt);
 
-        registerSourceManager(SoundCloudAudioSourceManager.createDefault());
-        registerSourceManager(new BandcampAudioSourceManager());
-        registerSourceManager(new VimeoAudioSourceManager());
-        registerSourceManager(new TwitchStreamAudioSourceManager());
-        registerSourceManager(new BeamAudioSourceManager());
-        registerSourceManager(new GetyarnAudioSourceManager());
-        registerSourceManager(new NicoAudioSourceManager());
-        registerSourceManager(new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY));
+        this.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+        this.registerSourceManager(new BandcampAudioSourceManager());
+        this.registerSourceManager(new VimeoAudioSourceManager());
+        this.registerSourceManager(new TwitchStreamAudioSourceManager());
+        this.registerSourceManager(new BeamAudioSourceManager());
+        this.registerSourceManager(new GetyarnAudioSourceManager());
+        this.registerSourceManager(new NicoAudioSourceManager());
+        this.registerSourceManager(new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY));
 
         AudioSourceManagers.registerLocalSource(this);
     }
@@ -71,7 +70,7 @@ public final class PlayerManager extends DefaultAudioPlayerManager
         return bot;
     }
     
-    public boolean hasHandler(Guild guild)
+    public static boolean hasHandler(Guild guild)
     {
         return guild.getAudioManager().getSendingHandler()!=null;
     }
@@ -81,7 +80,7 @@ public final class PlayerManager extends DefaultAudioPlayerManager
         AudioHandler handler;
         if(guild.getAudioManager().getSendingHandler()==null)
         {
-            AudioPlayer player = createPlayer();
+            var player = this.createPlayer();
             player.setVolume(bot.getSettingsManager().getSettings(guild).getVolume());
             handler = new AudioHandler(this, guild, player);
             player.addListener(handler);

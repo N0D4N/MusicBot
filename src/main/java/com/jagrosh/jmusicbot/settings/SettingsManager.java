@@ -43,9 +43,9 @@ public final class SettingsManager implements GuildSettingsManager<Settings>
         this.settings = new HashMap<>();
 
         try {
-            JSONObject loadedSettings = new JSONObject(new String(Files.readAllBytes(OtherUtil.getPath(SETTINGS_FILE))));
+            var loadedSettings = new JSONObject(new String(Files.readAllBytes(OtherUtil.getPath(SETTINGS_FILE))));
             loadedSettings.keySet().forEach((id) -> {
-                JSONObject o = loadedSettings.getJSONObject(id);
+                var o = loadedSettings.getJSONObject(id);
 
                 // Legacy version support: On versions 0.3.3 and older, the repeat mode was represented as a boolean.
                 if (!o.has("repeat_mode") && o.has("repeat") && o.getBoolean("repeat"))
@@ -103,10 +103,10 @@ public final class SettingsManager implements GuildSettingsManager<Settings>
 
     protected void writeSettings()
     {
-        JSONObject obj = new JSONObject();
+        var obj = new JSONObject();
         settings.keySet().stream().forEach(key -> {
-            JSONObject o = new JSONObject();
-            Settings s = settings.get(key);
+            var o = new JSONObject();
+            var s = settings.get(key);
             if(s.textId!=0)
                 o.put("text_channel_id", Long.toString(s.textId));
             if(s.voiceId!=0)

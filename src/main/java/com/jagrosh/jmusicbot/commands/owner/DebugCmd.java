@@ -50,9 +50,9 @@ public class DebugCmd extends OwnerCommand
     @Override
     protected void execute(CommandEvent event)
     {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         sb.append("```\nSystem Properties:");
-        for(String key: PROPERTIES)
+        for(var key: PROPERTIES)
             sb.append("\n  ").append(key).append(" = ").append(System.getProperty(key));
         sb.append("\n\nJMusicBot Information:")
                 .append("\n  Version = ").append(OtherUtil.getCurrentVersion())
@@ -69,8 +69,8 @@ public class DebugCmd extends OwnerCommand
                 .append("\n  JDA Version = ").append(JDAInfo.VERSION)
                 .append("\n  JDA-Utilities Version = ").append(JDAUtilitiesInfo.VERSION)
                 .append("\n  Lavaplayer Version = ").append(PlayerLibrary.VERSION);
-        long total = Runtime.getRuntime().totalMemory() / 1024 / 1024;
-        long used = total - (Runtime.getRuntime().freeMemory() / 1024 / 1024);
+        var total = Runtime.getRuntime().totalMemory() / 1024 / 1024;
+        var used = total - (Runtime.getRuntime().freeMemory() / 1024 / 1024);
         sb.append("\n\nRuntime Information:")
                 .append("\n  Total Memory = ").append(total)
                 .append("\n  Used Memory = ").append(used);

@@ -15,11 +15,9 @@
  */
 package com.jagrosh.jmusicbot.audio;
 
-import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import com.jagrosh.jmusicbot.queue.AbstractQueue;
 import com.jagrosh.jmusicbot.settings.QueueType;
 import com.jagrosh.jmusicbot.settings.RepeatMode;
-import com.jagrosh.jmusicbot.settings.Settings;
 import com.jagrosh.jmusicbot.utils.FormatUtil;
 import com.jagrosh.jmusicbot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -34,7 +32,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.Nullable;
@@ -49,10 +46,9 @@ import java.util.*;
  */
 public final class AudioHandler extends AudioEventAdapter implements AudioSendHandler
 {
-    public final static String PLAY_EMOJI  = "\u25B6"; // ▶
-    public final static String PAUSE_EMOJI = "\u23F8"; // ⏸
-    public final static String STOP_EMOJI  = "\u23F9"; // ⏹
-
+    private final static String PLAY_EMOJI = "\u25B6"; // ▶
+    private final static String PAUSE_EMOJI = "\u23F8"; // ⏸
+    private final static String STOP_EMOJI  = "\u23F9"; // ⏹
 
     private final List<AudioTrack> defaultQueue = new LinkedList<>();
     private final Set<String> votes = new HashSet<>();
@@ -137,7 +133,7 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
     {
         if(audioPlayer.getPlayingTrack() == null)
             return RequestMetadata.EMPTY;
-        RequestMetadata rm = audioPlayer.getPlayingTrack().getUserData(RequestMetadata.class);
+        var rm = audioPlayer.getPlayingTrack().getUserData(RequestMetadata.class);
         return rm == null ? RequestMetadata.EMPTY : rm;
     }
     
@@ -148,11 +144,11 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
             audioPlayer.playTrack(defaultQueue.remove(0));
             return true;
         }
-        Settings settings = manager.getBot().getSettingsManager().getSettings(guildId);
+        var settings = manager.getBot().getSettingsManager().getSettings(guildId);
         if(settings==null || settings.getDefaultPlaylist()==null)
             return false;
-        
-        Playlist pl = manager.getBot().getPlaylistLoader().getPlaylist(settings.getDefaultPlaylist());
+
+        var pl = manager.getBot().getPlaylistLoader().getPlaylist(settings.getDefaultPlaylist());
         if(pl==null || pl.getItems().isEmpty())
             return false;
         pl.loadTracks(manager, (at) -> 
@@ -173,11 +169,11 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) 
     {
-        RepeatMode repeatMode = manager.getBot().getSettingsManager().getSettings(guildId).getRepeatMode();
+        var repeatMode = manager.getBot().getSettingsManager().getSettings(guildId).getRepeatMode();
         // if the track ended normally, and we're in repeat mode, re-add it to the queue
         if(endReason==AudioTrackEndReason.FINISHED && repeatMode != RepeatMode.OFF)
         {
-            QueuedTrack clone = new QueuedTrack(track.makeClone(), track.getUserData(RequestMetadata.class));
+            var clone = new QueuedTrack(track.makeClone(), track.getUserData(RequestMetadata.class));
             if(repeatMode == RepeatMode.ALL)
                 queue.add(clone);
             else
@@ -202,7 +198,7 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
         }
         else
         {
-            QueuedTrack qt = queue.pull();
+            var qt = queue.pull();
             player.playTrack(qt.getTrack());
         }
     }
@@ -232,17 +228,17 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
     {
         if(isMusicPlaying(jda))
         {
-            Guild guild = guild(jda);
-            AudioTrack track = audioPlayer.getPlayingTrack();
+            var guild = guild(jda);
+            var track = audioPlayer.getPlayingTrack();
 
             var mb = new MessageCreateBuilder();
             mb.addContent(FormatUtil.filter(manager.getBot().getConfig().getSuccess()+" **Now Playing in "+guild.getSelfMember().getVoiceState().getChannel().getAsMention()+"...**"));
-            EmbedBuilder eb = new EmbedBuilder();
+            var eb = new EmbedBuilder();
             eb.setColor(guild.getSelfMember().getColor());
-            RequestMetadata rm = getRequestMetadata();
+            var rm = getRequestMetadata();
             if(rm.getOwner() != 0L)
             {
-                User u = guild.getJDA().getUserById(rm.user.id);
+                var u = guild.getJDA().getUserById(rm.user.id);
                 if(u==null)
                     eb.setAuthor(FormatUtil.formatUsername(rm.user), null, rm.user.avatar);
                 else
@@ -274,7 +270,7 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
             if(track.getInfo().author != null && !track.getInfo().author.isEmpty())
                 eb.setFooter("Source: " + track.getInfo().author, null);
 
-            double progress = (double)audioPlayer.getPlayingTrack().getPosition()/track.getDuration();
+            var progress = (double)audioPlayer.getPlayingTrack().getPosition()/track.getDuration();
             eb.setDescription(getStatusEmoji()
                     + " "+FormatUtil.progressBar(progress)
                     + " `[" + TimeUtil.formatTime(track.getPosition()) + "/" + TimeUtil.formatTime(track.getDuration()) + "]` "
@@ -287,7 +283,7 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
     
     public MessageCreateData getNoMusicPlaying(JDA jda)
     {
-        Guild guild = guild(jda);
+        var guild = guild(jda);
         return new MessageCreateBuilder()
                 .setContent(FormatUtil.filter(manager.getBot().getConfig().getSuccess()+" **Now Playing...**"))
                 .setEmbeds(new EmbedBuilder()

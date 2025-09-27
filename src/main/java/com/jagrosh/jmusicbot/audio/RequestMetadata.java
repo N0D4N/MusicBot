@@ -20,7 +20,6 @@ import com.jagrosh.jmusicbot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.User;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -70,7 +69,7 @@ public final class RequestMetadata
         private static final Pattern youtubeTimestampPattern = Pattern.compile("youtu(?:\\.be|be\\..+)/.*\\?.*(?!.*list=)t=([\\dhms]+)");
         private static long tryGetTimestamp(String url)
         {
-            Matcher matcher = youtubeTimestampPattern.matcher(url);
+            var matcher = youtubeTimestampPattern.matcher(url);
             return matcher.find() ? TimeUtil.parseUnitTime(matcher.group(1)) : 0;
         }
     }
