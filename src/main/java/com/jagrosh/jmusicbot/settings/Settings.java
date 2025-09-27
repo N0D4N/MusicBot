@@ -34,11 +34,11 @@ public final class Settings implements GuildSettingsProvider
     protected long textId;
     protected long voiceId;
     protected long roleId;
-    private int volume;
+    private final int volume;
     private String defaultPlaylist;
     private RepeatMode repeatMode;
     private QueueType queueType;
-    private String prefix;
+    private final String prefix;
     private double skipRatio;
 
     public Settings(SettingsManager manager, String textId, String voiceId, String roleId, int volume, String defaultPlaylist, RepeatMode repeatMode, String prefix, double skipRatio, QueueType queueType)

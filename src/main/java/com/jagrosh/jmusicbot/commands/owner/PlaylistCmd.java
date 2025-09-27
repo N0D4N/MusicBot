@@ -15,15 +15,12 @@
  */
 package com.jagrosh.jmusicbot.commands.owner;
 
-import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.commands.OwnerCommand;
-import com.jagrosh.jmusicbot.playlist.PlaylistLoader.Playlist;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  *
@@ -52,8 +49,8 @@ public class PlaylistCmd extends OwnerCommand
     @Override
     public void execute(CommandEvent event) 
     {
-        StringBuilder builder = new StringBuilder(event.getClient().getWarning()+" Playlist Management Commands:\n");
-        for(Command cmd: this.children)
+        var builder = new StringBuilder(event.getClient().getWarning()+" Playlist Management Commands:\n");
+        for(var cmd: this.children)
             builder.append("\n`").append(event.getClient().getPrefix()).append(name).append(" ").append(cmd.getName())
                     .append(" ").append(cmd.getArguments()==null ? "" : cmd.getArguments()).append("` - ").append(cmd.getHelp());
         event.reply(builder.toString());
@@ -73,9 +70,9 @@ public class PlaylistCmd extends OwnerCommand
         @Override
         protected void execute(CommandEvent event) 
         {
-            String pname = event.getArgs().replaceAll("\\s+", "_");
+            var pname = event.getArgs().replaceAll("\\s+", "_");
             pname = pname.replaceAll("[*?|\\/\":<>]", "");
-            if(pname == null || pname.isEmpty()) 
+            if(pname.isEmpty())
             {
                 event.replyError("Please provide a name for the playlist!");
             } 
@@ -110,7 +107,7 @@ public class PlaylistCmd extends OwnerCommand
         @Override
         protected void execute(CommandEvent event) 
         {
-            String pname = event.getArgs().replaceAll("\\s+", "_");
+            var pname = event.getArgs().replaceAll("\\s+", "_");
             if(bot.getPlaylistLoader().getPlaylist(pname)==null)
                 event.reply(event.getClient().getError()+" Playlist `"+pname+"` doesn't exist!");
             else
@@ -142,24 +139,24 @@ public class PlaylistCmd extends OwnerCommand
         @Override
         protected void execute(CommandEvent event) 
         {
-            String[] parts = event.getArgs().split("\\s+", 2);
+            var parts = event.getArgs().split("\\s+", 2);
             if(parts.length<2)
             {
                 event.reply(event.getClient().getError()+" Please include a playlist name and URLs to add!");
                 return;
             }
-            String pname = parts[0];
-            Playlist playlist = bot.getPlaylistLoader().getPlaylist(pname);
+            var pname = parts[0];
+            var playlist = bot.getPlaylistLoader().getPlaylist(pname);
             if(playlist==null)
                 event.reply(event.getClient().getError()+" Playlist `"+pname+"` doesn't exist!");
             else
             {
-                StringBuilder builder = new StringBuilder();
+                var builder = new StringBuilder();
                 playlist.getItems().forEach(item -> builder.append("\r\n").append(item));
-                String[] urls = parts[1].split("\\|");
-                for(String url: urls)
+                var urls = parts[1].split("\\|");
+                for(var url: urls)
                 {
-                    String u = url.trim();
+                    var u = url.trim();
                     if(u.startsWith("<") && u.endsWith(">"))
                         u = u.substring(1, u.length()-1);
                     builder.append("\r\n").append(u);
@@ -200,25 +197,25 @@ public class PlaylistCmd extends OwnerCommand
         }
 
         @Override
-        protected void execute(CommandEvent event) 
+        protected void execute(CommandEvent commandEvent)
         {
             if(!bot.getPlaylistLoader().folderExists())
                 bot.getPlaylistLoader().createFolder();
             if(!bot.getPlaylistLoader().folderExists())
             {
-                event.reply(event.getClient().getWarning()+" Playlists folder does not exist and could not be created!");
+                commandEvent.reply(commandEvent.getClient().getWarning()+" Playlists folder does not exist and could not be created!");
                 return;
             }
-            List<String> list = bot.getPlaylistLoader().getPlaylistNames();
+            var list = bot.getPlaylistLoader().getPlaylistNames();
             if(list==null)
-                event.reply(event.getClient().getError()+" Failed to load available playlists!");
+                commandEvent.reply(commandEvent.getClient().getError()+" Failed to load available playlists!");
             else if(list.isEmpty())
-                event.reply(event.getClient().getWarning()+" There are no playlists in the Playlists folder!");
+                commandEvent.reply(commandEvent.getClient().getWarning()+" There are no playlists in the Playlists folder!");
             else
             {
-                StringBuilder builder = new StringBuilder(event.getClient().getSuccess()+" Available playlists:\n");
+                var builder = new StringBuilder(commandEvent.getClient().getSuccess()+" Available playlists:\n");
                 list.forEach(str -> builder.append("`").append(str).append("` "));
-                event.reply(builder.toString());
+                commandEvent.reply(builder.toString());
             }
         }
     }

@@ -21,7 +21,6 @@ import com.jagrosh.jmusicbot.commands.OwnerCommand;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.interactions.InteractionContextType;
 
-import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 /**
@@ -44,29 +43,29 @@ public class EvalCmd extends OwnerCommand
     }
     
     @Override
-    protected void execute(CommandEvent event) 
+    protected void execute(CommandEvent commandEvent)
     {
-        ScriptEngine se = new ScriptEngineManager().getEngineByName(engine);
+        var se = new ScriptEngineManager().getEngineByName(engine);
         if(se == null)
         {
-            event.replyError("The eval engine provided in the config (`"+engine+"`) doesn't exist. This could be due to an invalid "
+            commandEvent.replyError("The eval engine provided in the config (`"+engine+"`) doesn't exist. This could be due to an invalid "
                     + "engine name, or the engine not existing in your version of java (`"+System.getProperty("java.version")+"`).");
             return;
         }
         se.put("bot", bot);
-        se.put("event", event);
-        se.put("jda", event.getJDA());
-        if (event.getChannelType() != ChannelType.PRIVATE) {
-            se.put("guild", event.getGuild());
-            se.put("channel", event.getChannel());
+        se.put("event", commandEvent);
+        se.put("jda", commandEvent.getJDA());
+        if (commandEvent.getChannelType() != ChannelType.PRIVATE) {
+            se.put("guild", commandEvent.getGuild());
+            se.put("channel", commandEvent.getChannel());
         }
         try
         {
-            event.reply(event.getClient().getSuccess()+" Evaluated Successfully:\n```\n"+se.eval(event.getArgs())+" ```");
+            commandEvent.reply(commandEvent.getClient().getSuccess()+" Evaluated Successfully:\n```\n"+se.eval(commandEvent.getArgs())+" ```");
         } 
         catch(Exception e)
         {
-            event.reply(event.getClient().getError()+" An exception was thrown:\n```\n"+e+" ```");
+            commandEvent.reply(commandEvent.getClient().getError()+" An exception was thrown:\n```\n"+e+" ```");
         }
     }
     

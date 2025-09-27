@@ -23,8 +23,6 @@ import com.jagrosh.jmusicbot.audio.PlayerManager;
 import com.jagrosh.jmusicbot.playlist.PlaylistLoader;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Guild;
 
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -110,14 +108,14 @@ public final class Bot
     
     public void closeAudioConnection(long guildId)
     {
-        Guild guild = jda.getGuildById(guildId);
+        var guild = jda.getGuildById(guildId);
         if(guild!=null)
             threadpool.submit(() -> guild.getAudioManager().closeAudioConnection());
     }
     
     public void resetGame()
     {
-        Activity game = config.getGame()==null || config.getGame().getName().equalsIgnoreCase("none") ? null : config.getGame();
+        var game = config.getGame()==null || config.getGame().getName().equalsIgnoreCase("none") ? null : config.getGame();
         if(!Objects.equals(jda.getPresence().getActivity(), game))
             jda.getPresence().setActivity(game);
     }
@@ -130,10 +128,10 @@ public final class Bot
         threadpool.shutdownNow();
         if(jda.getStatus()!=JDA.Status.SHUTTING_DOWN)
         {
-            jda.getGuilds().stream().forEach(g -> 
+            jda.getGuilds().forEach(g ->
             {
                 g.getAudioManager().closeAudioConnection();
-                AudioHandler ah = (AudioHandler)g.getAudioManager().getSendingHandler();
+                var ah = (AudioHandler)g.getAudioManager().getSendingHandler();
                 if(ah!=null)
                 {
                     ah.stopAndClear();

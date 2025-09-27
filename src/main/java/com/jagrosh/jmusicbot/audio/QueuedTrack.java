@@ -18,7 +18,6 @@ package com.jagrosh.jmusicbot.audio;
 import com.jagrosh.jmusicbot.queue.Queueable;
 import com.jagrosh.jmusicbot.utils.TimeUtil;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
 /**
  *
@@ -58,8 +57,8 @@ public final class QueuedTrack implements Queueable
     @Override
     public String toString() 
     {
-        String entry = "`[" + TimeUtil.formatTime(track.getDuration()) + "]` ";
-        AudioTrackInfo trackInfo = track.getInfo();
+        var entry = "`[" + TimeUtil.formatTime(track.getDuration()) + "]` ";
+        var trackInfo = track.getInfo();
         entry = entry + (trackInfo.uri.startsWith("http") ? "[**" + trackInfo.title + "**]("+trackInfo.uri+")" : "**" + trackInfo.title + "**");
         return entry + " - <@" + track.getUserData(RequestMetadata.class).getOwner() + ">";
     }

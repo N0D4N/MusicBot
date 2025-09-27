@@ -39,7 +39,7 @@ public class SkipratioCmd extends AdminCommand
     {
         try
         {
-            int val = Integer.parseInt(event.getArgs().endsWith("%") ? event.getArgs().substring(0,event.getArgs().length()-1) : event.getArgs());
+            var val = Integer.parseInt(event.getArgs().endsWith("%") ? event.getArgs().substring(0,event.getArgs().length()-1) : event.getArgs());
             if( val < 0 || val > 100)
             {
                 event.replyError("The provided value must be between 0 and 100!");

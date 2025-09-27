@@ -30,7 +30,7 @@ public final class FairQueue<T extends Queueable> extends AbstractQueue<T>
         super(queue);
     }
 
-    protected final Set<Long> set = new HashSet<>();
+    private final Set<Long> set = new HashSet<>();
 
     @Override
     public int add(T item)

@@ -15,7 +15,7 @@ class RandomCmd : Command() {
         this.name = "random"
         this.aliases = arrayOf("r")
         this.help = "get random number non-repeated number"
-        this.contexts = arrayOf(InteractionContextType.GUILD);
+        this.contexts = arrayOf(InteractionContextType.GUILD)
     }
 
     override fun execute(commandEvent: CommandEvent) {

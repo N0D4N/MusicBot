@@ -30,7 +30,6 @@ public class QueueTypeCmd extends AdminCommand
 {
     public QueueTypeCmd(Bot bot)
     {
-        super();
         this.name = "queuetype";
         this.help = "changes the queue type";
         this.arguments = "[" + String.join("|", QueueType.getNames()) + "]";
@@ -40,13 +39,13 @@ public class QueueTypeCmd extends AdminCommand
     @Override
     protected void execute(CommandEvent event)
     {
-        String args = event.getArgs();
+        var args = event.getArgs();
         QueueType value;
         Settings settings = event.getClient().getSettingsFor(event.getGuild());
 
         if (args.isEmpty())
         {
-            QueueType currentType = settings.getQueueType();
+            var currentType = settings.getQueueType();
             event.reply(currentType.getEmoji() + " Current queue type is: `" + currentType.getUserFriendlyName() + "`.");
             return;
         }
@@ -65,7 +64,7 @@ public class QueueTypeCmd extends AdminCommand
         {
             settings.setQueueType(value);
 
-            AudioHandler handler = (AudioHandler) event.getGuild().getAudioManager().getSendingHandler();
+            var handler = (AudioHandler) event.getGuild().getAudioManager().getSendingHandler();
             if (handler != null)
                 handler.setQueueType(value);
         }

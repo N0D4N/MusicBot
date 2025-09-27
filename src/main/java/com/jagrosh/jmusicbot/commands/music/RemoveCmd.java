@@ -37,14 +37,14 @@ public class RemoveCmd extends MusicCommand
         this.help = "removes a song from the queue";
         this.arguments = "<position|ALL>";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.setBeListening(true);
-        this.setBePlaying(true);
+        this.beListening = true;
+        this.bePlaying = true;
     }
 
     @Override
     public void doCommand(CommandEvent event) 
     {
-        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        var handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         if(handler.getQueue().isEmpty())
         {
             event.replyError("There is nothing in the queue!");
@@ -52,7 +52,7 @@ public class RemoveCmd extends MusicCommand
         }
         if(event.getArgs().equalsIgnoreCase("all"))
         {
-            int count = handler.getQueue().removeAll(event.getAuthor().getIdLong());
+            var count = handler.getQueue().removeAll(event.getAuthor().getIdLong());
             if(count==0)
                 event.replyWarning("You don't have any songs in the queue!");
             else
@@ -71,10 +71,10 @@ public class RemoveCmd extends MusicCommand
             return;
         }
         Settings settings = event.getClient().getSettingsFor(event.getGuild());
-        boolean isDJ = event.getMember().hasPermission(Permission.MANAGE_SERVER);
+        var isDJ = event.getMember().hasPermission(Permission.MANAGE_SERVER);
         if(!isDJ)
             isDJ = event.getMember().getRoles().contains(settings.getRole(event.getGuild()));
-        QueuedTrack qt = handler.getQueue().get(pos-1);
+        var qt = handler.getQueue().get(pos-1);
         if(qt.getIdentifier()==event.getAuthor().getIdLong())
         {
             handler.getQueue().remove(pos-1);

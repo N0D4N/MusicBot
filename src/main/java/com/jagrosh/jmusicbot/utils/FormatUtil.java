@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.entities.User;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class FormatUtil {
+public final class FormatUtil {
 
     public static String formatUsername(String username, String discrim)
     {
@@ -48,8 +48,8 @@ public class FormatUtil {
 
     public static String progressBar(double percent)
     {
-        String str = "";
-        for(int i=0; i<12; i++)
+        var str = "";
+        for(var i = 0; i<12; i++)
             if(i == (int)(percent*12))
                 str+="\uD83D\uDD18"; // 🔘
             else

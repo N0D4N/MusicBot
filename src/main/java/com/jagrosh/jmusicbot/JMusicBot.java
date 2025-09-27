@@ -46,8 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
-import java.awt.*;
-import java.util.Arrays;
+import java.awt.Color;
+import java.util.List;
 
 /**
  *
@@ -56,10 +56,11 @@ import java.util.Arrays;
 public final class JMusicBot
 {
     public final static Logger LOG = LoggerFactory.getLogger(JMusicBot.class);
-    public final static Permission[] RECOMMENDED_PERMS = {Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
-                                Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EXT_EMOJI,
-                                Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE};
-    public final static GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.MESSAGE_CONTENT};
+    public final static List<Permission> RECOMMENDED_PERMS = List.of(Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
+            Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EXT_EMOJI,
+            Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE);
+
+    public final static List<GatewayIntent> INTENTS = List.of(GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.MESSAGE_CONTENT);
     
     /**
      * @param args the command line arguments
@@ -80,7 +81,7 @@ public final class JMusicBot
     private static void startBot()
     {
         // load config
-        BotConfig config = new BotConfig();
+        var config = new BotConfig();
         config.load();
         if(!config.isValid())
             return;
@@ -91,15 +92,15 @@ public final class JMusicBot
                 Level.toLevel(config.getLogLevel(), Level.INFO));
         
         // set up the listener
-        EventWaiter waiter = new EventWaiter();
-        SettingsManager settings = new SettingsManager();
-        Bot bot = new Bot(waiter, config, settings);
-        CommandClient client = createCommandClient(config, settings, bot);
+        var waiter = new EventWaiter();
+        var settings = new SettingsManager();
+        var bot = new Bot(waiter, config, settings);
+        var client = createCommandClient(config, settings, bot);
         
         // attempt to log in and start
         try
         {
-            JDA jda = JDABuilder.create(config.getToken(), Arrays.asList(INTENTS))
+            var jda = JDABuilder.create(config.getToken(), INTENTS)
                     .enableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
                     .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOJI, CacheFlag.ONLINE_STATUS)
                     .setActivity(config.isGameNone() ? null : Activity.playing("loading..."))
@@ -111,7 +112,7 @@ public final class JMusicBot
             bot.setJDA(jda);
 
             // check if something about the current startup is not supported
-            String unsupportedReason = OtherUtil.getUnsupportedBotReason(jda);
+            var unsupportedReason = OtherUtil.getUnsupportedBotReason(jda);
             if (unsupportedReason != null)
             {
                 LOG.error("JMusicBot cannot be run on this Discord bot: " + unsupportedReason);
@@ -155,15 +156,15 @@ public final class JMusicBot
     private static CommandClient createCommandClient(BotConfig config, SettingsManager settings, Bot bot)
     {
         // instantiate about command
-        AboutCommand aboutCommand = new AboutCommand(Color.BLUE.brighter(),
+        var aboutCommand = new AboutCommand(Color.BLUE.brighter(),
                                 "a music bot that is [easy to host yourself!](https://github.com/jagrosh/MusicBot) (v" + OtherUtil.getCurrentVersion() + ")",
                                 new String[]{"High-quality music playback", "FairQueue™ Technology", "Easy to host yourself"},
-                                RECOMMENDED_PERMS);
+                                RECOMMENDED_PERMS.toArray(Permission[]::new));
         aboutCommand.setIsAuthor(false);
         aboutCommand.setReplacementCharacter("\uD83C\uDFB6"); // 🎶
         
         // set up the command client
-        CommandClientBuilder cb = new CommandClientBuilder()
+        var cb = new CommandClientBuilder()
                 .setPrefix(config.getPrefix())
                 .setAlternativePrefix(config.getAltPrefix())
                 .setOwnerId(Long.toString(config.getOwnerId()))

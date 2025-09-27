@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.ApplicationInfo;
 import net.dv8tion.jda.api.entities.User;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,7 +35,7 @@ import java.nio.file.Paths;
  *
  * @author John Grosh <john.a.grosh@gmail.com>
  */
-public class OtherUtil
+public final class OtherUtil
 {
     private final static String WINDOWS_INVALID_PATH = "c:\\windows\\system32\\";
     
@@ -48,7 +49,7 @@ public class OtherUtil
      */
     public static Path getPath(String path)
     {
-        Path result = Paths.get(path);
+        var result = Paths.get(path);
         // special logic to prevent trying to access system32
         if(result.toAbsolutePath().toString().toLowerCase().startsWith(WINDOWS_INVALID_PATH))
         {
@@ -70,9 +71,9 @@ public class OtherUtil
      */
     public static String loadResource(Object clazz, String name)
     {
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(clazz.getClass().getResourceAsStream(name))))
+        try(var reader = new BufferedReader(new InputStreamReader(clazz.getClass().getResourceAsStream(name))))
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             reader.lines().forEach(line -> sb.append("\r\n").append(line));
             return sb.toString().trim();
         }
@@ -92,7 +93,7 @@ public class OtherUtil
     {
         if(game==null || game.trim().isEmpty() || game.trim().equalsIgnoreCase("default"))
             return null;
-        String lower = game.toLowerCase();
+        var lower = game.toLowerCase();
         if(lower.startsWith("playing"))
             return Activity.playing(makeNonEmpty(game.substring(7).trim()));
         if(lower.startsWith("listening to"))
@@ -103,7 +104,7 @@ public class OtherUtil
             return Activity.watching(makeNonEmpty(game.substring(8).trim()));
         if(lower.startsWith("streaming"))
         {
-            String[] parts = game.substring(9).trim().split("\\s+", 2);
+            var parts = game.substring(9).trim().split("\\s+", 2);
             if(parts.length == 2)
             {
                 return Activity.streaming(makeNonEmpty(parts[1]), "https://twitch.tv/"+parts[0]);
@@ -121,8 +122,7 @@ public class OtherUtil
     {
         if(status==null || status.trim().isEmpty())
             return OnlineStatus.ONLINE;
-        OnlineStatus st = OnlineStatus.fromKey(status);
-        return st == null ? OnlineStatus.ONLINE : st;
+        return OnlineStatus.fromKey(status);
     }
 
     public static String getCurrentVersion()
@@ -137,12 +137,13 @@ public class OtherUtil
      * Checks if the bot JMusicBot is being run on is supported & returns the reason if it is not.
      * @return A string with the reason, or null if it is supported.
      */
+    @Nullable
     public static String getUnsupportedBotReason(JDA jda) 
     {
         if (jda.getSelfUser().getFlags().contains(User.UserFlag.VERIFIED_BOT))
             return "The bot is verified. Using JMusicBot in a verified bot is not supported.";
 
-        ApplicationInfo info = jda.retrieveApplicationInfo().complete();
+        var info = jda.retrieveApplicationInfo().complete();
         if (info.isBotPublic())
             return "\"Public Bot\" is enabled. Using JMusicBot as a public bot is not supported. Please disable it in the "
                     + "Developer Dashboard at https://discord.com/developers/applications/" + jda.getSelfUser().getId() + "/bot ."

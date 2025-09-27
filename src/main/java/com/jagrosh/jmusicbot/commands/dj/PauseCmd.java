@@ -32,13 +32,13 @@ public class PauseCmd extends DJCommand
         this.name = "pause";
         this.help = "pauses the current song";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.setBePlaying(true);
+        this.bePlaying = true;
     }
 
     @Override
     public void doCommand(CommandEvent event) 
     {
-        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        var handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         if(handler.getPlayer().isPaused())
         {
             event.replyWarning("The player is already paused! Use `"+event.getClient().getPrefix()+"play` to unpause!");

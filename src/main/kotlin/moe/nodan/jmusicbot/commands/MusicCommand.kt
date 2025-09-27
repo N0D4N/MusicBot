@@ -13,8 +13,10 @@ import net.dv8tion.jda.api.interactions.InteractionContextType
  * @author John Grosh <john.a.grosh></john.a.grosh>@gmail.com>
  * @author N0D4N
  */
-abstract class MusicCommand(val bot: Bot) : Command() {
+abstract class MusicCommand(@JvmField val bot: Bot) : Command() {
+    @JvmField
     protected var bePlaying: Boolean = false
+    @JvmField
     protected var beListening: Boolean = false
 
     init {
@@ -49,7 +51,7 @@ abstract class MusicCommand(val bot: Bot) : Command() {
 
             val userState = event.member.voiceState
             if (userState != null && !userState.inAudioChannel() || userState!!.isDeafened || (current != null && userState.channel != current)) {
-                event.replyError("You must be listening in " + (if (current == null) "a voice channel" else current.asMention) + " to use that!")
+                event.replyError("You must be listening in " + (current?.asMention ?: "a voice channel") + " to use that!")
                 return
             }
 

@@ -32,7 +32,7 @@ public class StopCmd extends DJCommand
         this.name = "stop";
         this.help = "stops the current song and clears the queue";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.setBePlaying(false);
+        this.bePlaying = false;
     }
 
     @Override

@@ -39,7 +39,7 @@ public class BotConfig
 {
     private final static String START_TOKEN = "/// START OF JMUSICBOT CONFIG ///";
     private final static String END_TOKEN = "/// END OF JMUSICBOT CONFIG ///";
-    public final static Logger LOG = LoggerFactory.getLogger("Config");
+    private final static Logger LOG = LoggerFactory.getLogger("Config");
     
     private Path path = null;
     private String token, prefix, altprefix, helpWord, playlistsFolder, logLevel,
@@ -72,7 +72,7 @@ public class BotConfig
             
             // load in the config file, plus the default values
             //Config config = ConfigFactory.parseFile(path.toFile()).withFallback(ConfigFactory.load());
-            Config config = ConfigFactory.load();
+            var config = ConfigFactory.load();
             
             // set values
             token = config.getString("token");
@@ -105,7 +105,7 @@ public class BotConfig
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
-            boolean write = false;
+            var write = false;
 
             // validate bot token
             if(token==null || token.isEmpty() || token.equalsIgnoreCase("BOT_TOKEN_HERE"))
@@ -135,7 +135,7 @@ public class BotConfig
     
     private void writeToFile()
     {
-        byte[] bytes = loadDefaultConfig().replace("BOT_TOKEN_HERE", token)
+        var bytes = loadDefaultConfig().replace("BOT_TOKEN_HERE", token)
                 .replace("0 // OWNER ID", Long.toString(owner))
                 .trim().getBytes();
         try 
@@ -152,7 +152,7 @@ public class BotConfig
     
     private static String loadDefaultConfig()
     {
-        String original = OtherUtil.loadResource(new JMusicBot(), "/reference.conf");
+        var original = OtherUtil.loadResource(new JMusicBot(), "/reference.conf");
         return original==null 
                 ? "token = BOT_TOKEN_HERE\r\nowner = 0 // OWNER ID" 
                 : original.substring(original.indexOf(START_TOKEN)+START_TOKEN.length(), original.indexOf(END_TOKEN)).trim();
@@ -160,7 +160,7 @@ public class BotConfig
     
     private static Path getConfigPath()
     {
-        Path path = OtherUtil.getPath(System.getProperty("config.file", System.getProperty("config", "config.txt")));
+        var path = OtherUtil.getPath(System.getProperty("config.file", System.getProperty("config", "config.txt")));
         if(path.toFile().exists())
         {
             if(System.getProperty("config.file") == null)
@@ -173,8 +173,8 @@ public class BotConfig
     public static void writeDefaultConfig()
     {
         LOG.info("Generating default config file");
-        Path path = BotConfig.getConfigPath();
-        byte[] bytes = BotConfig.loadDefaultConfig().getBytes();
+        var path = BotConfig.getConfigPath();
+        var bytes = BotConfig.loadDefaultConfig().getBytes();
         try
         {
             LOG.info("Writing default config file to " + path.toAbsolutePath().toString());
@@ -323,7 +323,7 @@ public class BotConfig
     
     public String getMaxTime()
     {
-        return TimeUtil.formatTime(maxSeconds * 1000);
+        return TimeUtil.formatTime(maxSeconds * 1000L);
     }
 
     public long getAloneTimeUntilStop()

@@ -20,6 +20,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.typesafe.config.Config;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import org.jetbrains.annotations.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -61,16 +62,17 @@ public final class TransformativeAudioSourceManager extends YoutubeAudioSourceMa
     }
 
     @Override
+    @Nullable
     public AudioItem loadItem(AudioPlayerManager apm, AudioReference ar)
     {
         if(ar.identifier == null || !ar.identifier.matches(regex))
             return null;
         try
         {
-            String url = ar.identifier.replaceAll(regex, replacement);
-            Document doc = Jsoup.connect(url).get();
-            String value = doc.selectFirst(selector).ownText();
-            String formattedValue = String.format(format, value);
+            var url = ar.identifier.replaceAll(regex, replacement);
+            var doc = Jsoup.connect(url).get();
+            var value = doc.selectFirst(selector).ownText();
+            var formattedValue = String.format(format, value);
             return super.loadItem(apm, new AudioReference(formattedValue, null));
         }
         catch (PatternSyntaxException ex)

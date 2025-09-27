@@ -27,9 +27,9 @@ class SettingsCmd(bot: Bot) : Command() {
     }
 
     override fun execute(event: CommandEvent) {
-        val s: Settings = event.client.getSettingsFor<Settings>(event.guild)
+        val s: Settings = event.client.getSettingsFor(event.guild)
         val builder = MessageCreateBuilder()
-            .addContent(EMOJI + " **")
+            .addContent("$EMOJI **")
             .addContent(FormatUtil.filter(event.selfUser.name))
             .addContent("** settings:")
         val tchan: TextChannel? = s.getTextChannel(event.guild)
@@ -39,7 +39,7 @@ class SettingsCmd(bot: Bot) : Command() {
             .setColor(event.selfMember.color)
             .setDescription(
                 ("Text Channel: " + (if (tchan == null) "Any" else "**#" + tchan.name + "**")
-                        + "\nVoice Channel: " + (if (vchan == null) "Any" else vchan.asMention)
+                        + "\nVoice Channel: " + (vchan?.asMention ?: "Any")
                         + "\nDJ Role: " + (if (role == null) "None" else "**" + role.name + "**")
                         + "\nCustom Prefix: " + (if (s.prefix == null) "None" else "`" + s.prefix + "`")
                         + "\nRepeat Mode: " + (if (s.repeatMode == RepeatMode.OFF)

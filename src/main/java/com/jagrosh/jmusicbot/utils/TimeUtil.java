@@ -15,17 +15,17 @@
  */
 package com.jagrosh.jmusicbot.utils;
 
-public class TimeUtil
+public final class TimeUtil
 {
 
     public static String formatTime(long duration)
     {
         if(duration == Long.MAX_VALUE)
             return "LIVE";
-        long seconds = Math.round(duration/1000.0);
-        long hours = seconds/(60*60);
+        var seconds = Math.round(duration/1000.0);
+        var hours = seconds/(60*60);
         seconds %= 60*60;
-        long minutes = seconds/60;
+        var minutes = seconds/60;
         seconds %= 60;
         return (hours>0 ? hours+":" : "") + (minutes<10 ? "0"+minutes : minutes) + ":" + (seconds<10 ? "0"+seconds : seconds);
     }
@@ -38,11 +38,11 @@ public class TimeUtil
      */
     public static SeekTime parseTime(String args)
     {
-        if (args.length() == 0) return null;
-        String timestamp = args;
-        boolean relative = false; // seek forward or backward
-        boolean isSeekingBackwards = false;
-        char first = timestamp.charAt(0);
+        if (args.isEmpty()) return null;
+        var timestamp = args;
+        var relative = false; // seek forward or backward
+        var isSeekingBackwards = false;
+        var first = timestamp.charAt(0);
         if (first == '+' || first == '-')
         {
             relative = true;
@@ -50,7 +50,7 @@ public class TimeUtil
             timestamp = timestamp.substring(1);
         }
 
-        long milliseconds = parseColonTime(timestamp);
+        var milliseconds = parseColonTime(timestamp);
         if(milliseconds == -1) milliseconds = parseUnitTime(timestamp);
         if(milliseconds == -1) return null;
 
@@ -65,13 +65,13 @@ public class TimeUtil
      */
     public static long parseColonTime(String timestamp)
     {
-        String[] timestampSplitArray = timestamp.split(":+");
+        var timestampSplitArray = timestamp.split(":+");
         if(timestampSplitArray.length > 3 )
             return -1;
-        double[] timeUnitArray = new double[3]; // hours, minutes, seconds
-        for(int index = 0; index < timestampSplitArray.length; index++)
+        var timeUnitArray = new double[3]; // hours, minutes, seconds
+        for(var index = 0; index < timestampSplitArray.length; index++)
         {
-            String unit = timestampSplitArray[index];
+            var unit = timestampSplitArray[index];
             if (unit.startsWith("+") || unit.startsWith("-")) return -1;
             unit = unit.replace(",", ".");
             try
@@ -96,13 +96,13 @@ public class TimeUtil
         timestr = timestr.replaceAll("(?i)(\\s|,|and)","")
                 .replaceAll("(?is)(-?\\d+|[a-z]+)", "$1 ")
                 .trim();
-        String[] vals = timestr.split("\\s+");
-        int time = 0;
+        var vals = timestr.split("\\s+");
+        var time = 0;
         try
         {
-            for(int j=0; j<vals.length; j+=2)
+            for(var j = 0; j<vals.length; j+=2)
             {
-                int num = Integer.parseInt(vals[j]);
+                var num = Integer.parseInt(vals[j]);
 
                 if(vals.length > j+1)
                 {
@@ -124,15 +124,5 @@ public class TimeUtil
         return time;
     }
 
-    public static final class SeekTime
-    {
-        public final long milliseconds;
-        public final boolean relative;
-
-        private SeekTime(long milliseconds, boolean relative)
-        {
-            this.milliseconds = milliseconds;
-            this.relative = relative;
-        }
-    }
+    public record SeekTime(long milliseconds, boolean relative) {}
 }

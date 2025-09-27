@@ -47,7 +47,7 @@ public enum QueueType
 
     public static List<String> getNames()
     {
-        return Arrays.stream(QueueType.values())
+        return Arrays.stream(values())
                 .map(type -> type.name().toLowerCase())
                 .collect(Collectors.toList());
     }

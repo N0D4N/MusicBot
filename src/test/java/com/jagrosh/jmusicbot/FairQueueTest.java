@@ -29,9 +29,9 @@ public class FairQueueTest
     @Test
     public void differentIdentifierSize()
     {
-        FairQueue<Q> queue = new FairQueue<>(null);
-        int size = 100;
-        for(int i=0; i<size; i++)
+        var queue = new FairQueue<Q>(null);
+        var size = 100;
+        for(var i = 0; i<size; i++)
             queue.add(new Q(i));
         assertEquals(queue.size(), size);
     }
@@ -39,9 +39,9 @@ public class FairQueueTest
     @Test
     public void sameIdentifierSize()
     {
-        FairQueue<Q> queue = new FairQueue<>(null);
-        int size = 100;
-        for(int i=0; i<size; i++)
+        var queue = new FairQueue<Q>(null);
+        var size = 100;
+        for(var i = 0; i<size; i++)
             queue.add(new Q(0));
         assertEquals(queue.size(), size);
     }

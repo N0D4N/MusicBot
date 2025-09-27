@@ -33,13 +33,13 @@ public class SkiptoCmd extends DJCommand
         this.help = "skips to the specified song";
         this.arguments = "<position>";
         this.aliases = bot.getConfig().getAliases(this.name);
-        this.setBePlaying(true);
+        this.bePlaying = true;
     }
 
     @Override
     public void doCommand(CommandEvent event) 
     {
-        int index = 0;
+        var index = 0;
         try
         {
             index = Integer.parseInt(event.getArgs());
@@ -49,7 +49,7 @@ public class SkiptoCmd extends DJCommand
             event.reply(event.getClient().getError()+" `"+event.getArgs()+"` is not a valid integer!");
             return;
         }
-        AudioHandler handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
+        var handler = (AudioHandler)event.getGuild().getAudioManager().getSendingHandler();
         if(index<1 || index>handler.getQueue().size())
         {
             event.reply(event.getClient().getError()+" Position must be a valid integer between 1 and "+handler.getQueue().size()+"!");
