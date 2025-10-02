@@ -55,6 +55,7 @@ public class BotConfig
 
     private boolean valid = false;
     private String oauth2Token;
+    private String ytcUrl;
 
     public BotConfig()
     {
@@ -102,6 +103,7 @@ public class BotConfig
             transforms = config.getConfig("transforms");
             skipratio = config.getDouble("skipratio");
             oauth2Token = config.getString("oauth2token");
+            ytcUrl = config.getString("ytcUrl");
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
@@ -357,5 +359,9 @@ public class BotConfig
 
     public String getOauth2Token() {
         return oauth2Token;
+    }
+
+    public String getYtcUrl() {
+        return ytcUrl;
     }
 }

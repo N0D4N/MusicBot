@@ -28,6 +28,7 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.YoutubeSourceOptions;
 import dev.lavalink.youtube.clients.TvHtml5Embedded;
 import net.dv8tion.jda.api.entities.Guild;
 
@@ -48,7 +49,11 @@ public final class PlayerManager extends DefaultAudioPlayerManager
     {
         TransformativeAudioSourceManager.createTransforms(bot.getConfig().getTransforms()).forEach(this::registerSourceManager);
 
-        var yt = new YoutubeAudioSourceManager(true, new TvHtml5Embedded());
+        var ytSrcOptions = new YoutubeSourceOptions();
+        ytSrcOptions.setAllowSearch(true);
+        ytSrcOptions.setRemoteCipherUrl(bot.getConfig().getYtcUrl(), "");
+
+        var yt = new YoutubeAudioSourceManager(ytSrcOptions, new TvHtml5Embedded());
         yt.setPlaylistPageCount(bot.getConfig().getMaxYTPlaylistPages());
         yt.useOauth2(bot.getConfig().getOauth2Token(), true);
         this.registerSourceManager(yt);
