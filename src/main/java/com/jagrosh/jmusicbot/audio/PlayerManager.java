@@ -51,7 +51,7 @@ public final class PlayerManager extends DefaultAudioPlayerManager
 
         var ytSrcOptions = new YoutubeSourceOptions();
         ytSrcOptions.setAllowSearch(true);
-        ytSrcOptions.setRemoteCipherUrl(bot.getConfig().getYtcUrl(), "");
+        ytSrcOptions.setRemoteCipher(bot.getConfig().getYtcUrl(), null, null);
 
         var yt = new YoutubeAudioSourceManager(ytSrcOptions, new TvHtml5Embedded());
         yt.setPlaylistPageCount(bot.getConfig().getMaxYTPlaylistPages());
