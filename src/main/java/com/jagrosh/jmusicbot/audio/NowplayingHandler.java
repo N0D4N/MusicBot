@@ -18,10 +18,10 @@ package com.jagrosh.jmusicbot.audio;
 import com.jagrosh.jmusicbot.Bot;
 import com.jagrosh.jmusicbot.entities.Pair;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import moe.nodan.jmusicbot.utils.Util;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,7 +106,9 @@ public final class NowplayingHandler
                 final var voiceState = g.getSelfMember().getVoiceState();
                 return voiceState != null && voiceState.inAudioChannel();
             }).count()<= 1)
-                bot.getJDA().getPresence().setActivity(Activity.listening(track.getInfo().title));
+            {
+                bot.getJDA().getPresence().setActivity(Activity.listening(Util.getTrackName(track.getInfo())));
+            }
             else
                 bot.resetGame();
         }

@@ -26,8 +26,10 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import moe.nodan.jmusicbot.audio.AnisonUpdateTask;
+import moe.nodan.jmusicbot.utils.Util;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.audio.AudioSendHandler;
@@ -245,21 +247,24 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
                     eb.setAuthor(FormatUtil.formatUsername(u), null, u.getEffectiveAvatarUrl());
             }
 
-            try 
+            AudioTrackInfo info = track.getInfo();
+            final var audioTitle = Util.getTrackName(info);
+
+            try
             {
                 String title;
-                if(track.getInfo().uri.contains("anison.fm")){
+                if(info.uri.contains("anison.fm")){
                     title = jda.getPresence().getActivity().getName();
                 }
                 else
                 {
-                    title = track.getInfo().title;
+                    title = audioTitle;
                 }
-                eb.setTitle(title, track.getInfo().uri);
+                eb.setTitle(title, info.uri);
             }
             catch(Exception e) 
             {
-                eb.setTitle(track.getInfo().title);
+                eb.setTitle(audioTitle);
             }
 
             if(track instanceof YoutubeAudioTrack && manager.getBot().getConfig().useNPImages())
@@ -267,8 +272,8 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
                 eb.setThumbnail("https://img.youtube.com/vi/"+track.getIdentifier()+"/mqdefault.jpg");
             }
             
-            if(track.getInfo().author != null && !track.getInfo().author.isEmpty())
-                eb.setFooter("Source: " + track.getInfo().author, null);
+            if(info.author != null && !info.author.isEmpty())
+                eb.setFooter("Source: " + info.author, null);
 
             var progress = (double)audioPlayer.getPlayingTrack().getPosition()/track.getDuration();
             eb.setDescription(getStatusEmoji()
