@@ -97,8 +97,22 @@ public final class NowplayingHandler
     }
 
     // "event"-based methods
-    public void onTrackUpdate(AudioTrack track)
+    public void onTrackUpdate(AudioTrack track, AudioHandler handler)
     {
+        if (track != null) {
+            var guild = handler.guild(bot.getJDA());
+            var voiceState = guild.getSelfMember().getVoiceState();
+
+            if (voiceState != null && voiceState.inAudioChannel()) {
+                var channel = voiceState.getChannel().asVoiceChannel();
+                try {
+                    channel.modifyStatus(Util.getTrackName(track.getInfo()));
+                }
+                catch (Exception e) {
+
+                }
+            }
+        }
         // update bot status if applicable
         if(bot.getConfig().getSongInStatus())
         {

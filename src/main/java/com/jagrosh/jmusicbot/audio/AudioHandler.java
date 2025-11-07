@@ -186,7 +186,7 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
         {
             if(!playFromDefault())
             {
-                manager.getBot().getNowplayingHandler().onTrackUpdate(null);
+                manager.getBot().getNowplayingHandler().onTrackUpdate(null, this);
                 if(timer != null){
                     this.timer.cancel();
                     this.timer = null;
@@ -219,7 +219,7 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
             this.timer.schedule(new AnisonUpdateTask(this.manager.getBot()), 0, 10000);
         }
         else{
-            manager.getBot().getNowplayingHandler(). onTrackUpdate(track);
+            manager.getBot().getNowplayingHandler().onTrackUpdate(track, this);
         }
     }
 
@@ -321,10 +321,8 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
     {
         return true;
     }
-    
-    
-    // Private methods
-    private Guild guild(JDA jda)
+
+    public Guild guild(JDA jda)
     {
         return jda.getGuildById(guildId);
     }
