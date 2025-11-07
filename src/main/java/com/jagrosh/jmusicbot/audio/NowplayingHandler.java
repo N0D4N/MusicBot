@@ -22,6 +22,8 @@ import moe.nodan.jmusicbot.utils.Util;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,11 +38,13 @@ public final class NowplayingHandler
 {
     private final Bot bot;
     private final HashMap<Long,Pair<Long,Long>> lastNP; // guild -> channel,message
-    
+    private final Logger logger;
+
     public NowplayingHandler(Bot bot)
     {
         this.bot = bot;
         this.lastNP = new HashMap<>();
+        this.logger = LoggerFactory.getLogger(NowplayingHandler.class.getName());
     }
     
     public void init()
@@ -106,10 +110,10 @@ public final class NowplayingHandler
             if (voiceState != null && voiceState.inAudioChannel()) {
                 var channel = voiceState.getChannel().asVoiceChannel();
                 try {
-                    channel.modifyStatus(Util.getTrackName(track.getInfo()));
+                    channel.modifyStatus(Util.getTrackName(track.getInfo())).queue();
                 }
                 catch (Exception e) {
-
+                    logger.error("got ex", e);
                 }
             }
         }
