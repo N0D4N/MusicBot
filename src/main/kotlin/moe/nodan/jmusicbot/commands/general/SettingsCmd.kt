@@ -36,7 +36,7 @@ class SettingsCmd(bot: Bot) : Command() {
         val vchan = s.getVoiceChannel(event.guild)
         val role = s.getRole(event.guild)
         val ebuilder = EmbedBuilder()
-            .setColor(event.selfMember.color)
+            .setColor(event.selfMember.colors.primary)
             .setDescription(
                 ("Text Channel: " + (if (tchan == null) "Any" else "**#" + tchan.name + "**")
                         + "\nVoice Channel: " + (vchan?.asMention ?: "Any")

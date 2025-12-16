@@ -9,8 +9,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
         <kotlin.compiler.jvmTarget>25</kotlin.compiler.jvmTarget>
-        <kotlin.version>2.2.21</kotlin.version>
-        <kotlin.compiler.languageVersion>2.2</kotlin.compiler.languageVersion>
+        <kotlin.version>2.3.0</kotlin.version>
+        <kotlin.compiler.languageVersion>2.3</kotlin.compiler.languageVersion>
     </properties>
 
     <repositories>
@@ -58,12 +58,12 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>6.1.1</version>
+            <version>6.2.0</version>
         </dependency>
         <dependency>
             <groupId>pw.chew</groupId>
             <artifactId>jda-chewtils</artifactId>
-            <version>2.1</version>
+            <version>2.2.1</version>
             <type>pom</type>
         </dependency>
         <!-- Music Dependencies -->
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.20</version>
+            <version>1.5.21</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
