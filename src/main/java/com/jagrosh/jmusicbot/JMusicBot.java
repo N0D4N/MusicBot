@@ -16,6 +16,7 @@
 package com.jagrosh.jmusicbot;
 
 import ch.qos.logback.classic.Level;
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
@@ -34,10 +35,10 @@ import com.jagrosh.jmusicbot.utils.OtherUtil;
 import moe.nodan.jmusicbot.commands.general.OldRandomCmd;
 import moe.nodan.jmusicbot.commands.general.RandomCmd;
 import moe.nodan.jmusicbot.commands.general.SettingsCmd;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -46,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -101,6 +102,7 @@ public final class JMusicBot
         try
         {
             var jda = JDABuilder.create(config.getToken(), INTENTS)
+                    .setAudioModuleConfig(new AudioModuleConfig().withDaveSessionFactory(new JDaveSessionFactory()))
                     .enableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
                     .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOJI, CacheFlag.ONLINE_STATUS)
                     .setActivity(config.isGameNone() ? null : Activity.playing("loading..."))

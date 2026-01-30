@@ -30,6 +30,7 @@ import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.YoutubeSourceOptions;
 import dev.lavalink.youtube.clients.TvHtml5Embedded;
+import dev.lavalink.youtube.clients.WebEmbedded;
 import net.dv8tion.jda.api.entities.Guild;
 
 /**
@@ -53,7 +54,7 @@ public final class PlayerManager extends DefaultAudioPlayerManager
         ytSrcOptions.setAllowSearch(true);
         ytSrcOptions.setRemoteCipher(bot.getConfig().getYtcUrl(), null, null);
 
-        var yt = new YoutubeAudioSourceManager(ytSrcOptions, new TvHtml5Embedded());
+        var yt = new YoutubeAudioSourceManager(ytSrcOptions, new WebEmbedded(), new TvHtml5Embedded());
         yt.setPlaylistPageCount(bot.getConfig().getMaxYTPlaylistPages());
         yt.useOauth2(bot.getConfig().getOauth2Token(), true);
         this.registerSourceManager(yt);
