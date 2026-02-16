@@ -236,7 +236,7 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
             var mb = new MessageCreateBuilder();
             mb.addContent(FormatUtil.filter(manager.getBot().getConfig().getSuccess()+" **Now Playing in "+guild.getSelfMember().getVoiceState().getChannel().getAsMention()+"...**"));
             var eb = new EmbedBuilder();
-            eb.setColor(guild.getSelfMember().getColor());
+            eb.setColor(guild.getSelfMember().getColors().getPrimary());
             var rm = getRequestMetadata();
             if(rm.getOwner() != 0L)
             {
@@ -294,7 +294,7 @@ public final class AudioHandler extends AudioEventAdapter implements AudioSendHa
                 .setEmbeds(new EmbedBuilder()
                 .setTitle("No music playing")
                 .setDescription(STOP_EMOJI+" "+FormatUtil.progressBar(-1)+" "+FormatUtil.volumeIcon(audioPlayer.getVolume()))
-                .setColor(guild.getSelfMember().getColor())
+                .setColor(guild.getSelfMember().getColors().getPrimary())
                 .build()).build();
     }
 
