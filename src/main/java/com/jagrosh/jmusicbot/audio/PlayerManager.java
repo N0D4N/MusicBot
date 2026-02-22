@@ -29,8 +29,7 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.YoutubeSourceOptions;
-import dev.lavalink.youtube.clients.TvHtml5Embedded;
-import dev.lavalink.youtube.clients.WebEmbedded;
+import dev.lavalink.youtube.clients.*;
 import net.dv8tion.jda.api.entities.Guild;
 
 /**
@@ -54,7 +53,37 @@ public final class PlayerManager extends DefaultAudioPlayerManager
         ytSrcOptions.setAllowSearch(true);
         ytSrcOptions.setRemoteCipher(bot.getConfig().getYtcUrl(), null, null);
 
-        var yt = new YoutubeAudioSourceManager(ytSrcOptions, new WebEmbedded(), new TvHtml5Embedded());
+        var androidMusicOptions = new ClientOptions();
+        androidMusicOptions.setPlayback(false);
+        androidMusicOptions.setPlaylistLoading(false);
+        androidMusicOptions.setSearching(false);
+        androidMusicOptions.setVideoLoading(true);
+
+        var musicOptions = new ClientOptions();
+        musicOptions.setPlayback(false);
+        musicOptions.setPlaylistLoading(false);
+        musicOptions.setSearching(true);
+        musicOptions.setVideoLoading(false);
+
+        var webOptions = new ClientOptions();
+        webOptions.setPlayback(false);
+        webOptions.setPlaylistLoading(true);
+        webOptions.setSearching(true);
+        webOptions.setVideoLoading(false);
+
+        var webEmbedOptions = new ClientOptions();
+        webEmbedOptions.setPlayback(false);
+        webEmbedOptions.setPlaylistLoading(false);
+        webEmbedOptions.setSearching(false);
+        webEmbedOptions.setVideoLoading(false);
+
+        var androidVr = new ClientOptions();
+        webEmbedOptions.setPlayback(true);
+        webEmbedOptions.setPlaylistLoading(true);
+        webEmbedOptions.setSearching(false);
+        webEmbedOptions.setVideoLoading(true);
+
+        var yt = new YoutubeAudioSourceManager(ytSrcOptions, new AndroidMusicWithThumbnail(androidMusicOptions), new MusicWithThumbnail(musicOptions), new WebWithThumbnail(webOptions), new WebEmbeddedWithThumbnail(webEmbedOptions), new AndroidVrWithThumbnail(androidVr));
         yt.setPlaylistPageCount(bot.getConfig().getMaxYTPlaylistPages());
         yt.useOauth2(bot.getConfig().getOauth2Token(), true);
         this.registerSourceManager(yt);
