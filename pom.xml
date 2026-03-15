@@ -11,6 +11,7 @@
         <kotlin.compiler.jvmTarget>25</kotlin.compiler.jvmTarget>
         <kotlin.version>2.3.10</kotlin.version>
         <kotlin.compiler.languageVersion>2.3</kotlin.compiler.languageVersion>
+        <jdave.api.version>0.1.7</jdave.api.version>
     </properties>
 
     <repositories>
@@ -58,27 +59,27 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>6.3.1</version>
+            <version>6.3.2</version>
         </dependency>
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>jdave-api</artifactId>
-            <version>0.1.6</version>
+            <version>${jdave.api.version}</version>
         </dependency>
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>jdave-native-linux-x86-64</artifactId>
-            <version>0.1.6</version>
+            <version>${jdave.api.version}</version>
         </dependency>
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>jdave-native-linux-aarch64</artifactId>
-            <version>0.1.6</version>
+            <version>${jdave.api.version}</version>
         </dependency>
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>jdave-native-win-x86-64</artifactId>
-            <version>0.1.6</version>
+            <version>${jdave.api.version}</version>
         </dependency>
         <dependency>
             <groupId>pw.chew</groupId>
@@ -94,20 +95,15 @@
         </dependency>
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
-            <artifactId>common</artifactId>
-            <version>1.17.0</version>
-        </dependency>
-        <dependency>
-            <groupId>dev.lavalink.youtube</groupId>
             <artifactId>v2</artifactId>
-            <version>1.17.0</version>
+            <version>1.18.0</version>
         </dependency>
 
         <!-- Misc Internal Dependencies -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.31</version>
+            <version>1.5.32</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe</groupId>
@@ -192,7 +188,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version>
+                <version>3.15.0</version>
                 <executions>
                     <!-- Replacing default-compile as it is treated specially by Maven -->
                     <execution>
@@ -228,7 +224,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
