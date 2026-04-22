@@ -18,11 +18,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up JDK 25
+      - name: Set up JDK 26
         uses: actions/setup-java@v2
         with:
-          java-version: '25'
-          distribution: 'zulu'
+          java-version: '26'
+          distribution: 'temurin'
           cache: maven
       - name: Set Version
         uses: datamonsters/replace-action@v2
