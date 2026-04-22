@@ -135,22 +135,25 @@ public final class JMusicBot
         }
         catch (Exception ex)
         {
-            if (ex instanceof LoginException) {
-                LOG.error(ex + "\nPlease make sure you are "
-                        + "editing the correct config.txt file, and that you have used the "
-                        + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
-                System.exit(1);
-            }
-            else if (ex instanceof IllegalArgumentException) {
-                LOG.error("Some aspect of the configuration is "
-                        + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
-                System.exit(1);
-            }
-            else if (ex instanceof ErrorResponseException) {
-                LOG.error(ex + "\nInvalid reponse returned when "
-                        + "attempting to connect, please make sure you're connected to the internet");
-                System.exit(1);
-
+            switch (ex) {
+                case LoginException loginException -> {
+                    LOG.error(ex + "\nPlease make sure you are "
+                            + "editing the correct config.txt file, and that you have used the "
+                            + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
+                    System.exit(1);
+                }
+                case IllegalArgumentException illegalArgumentException -> {
+                    LOG.error("Some aspect of the configuration is "
+                            + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
+                    System.exit(1);
+                }
+                case ErrorResponseException errorResponseException -> {
+                    LOG.error(ex + "\nInvalid reponse returned when "
+                            + "attempting to connect, please make sure you're connected to the internet");
+                    System.exit(1);
+                }
+                default -> {
+                }
             }
         }
     }
